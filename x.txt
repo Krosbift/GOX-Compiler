@@ -1,0 +1,12 @@
+git branch rama
+git checkout rama
+
+realiza su código
+
+git add .
+git commit -m "mensaje"
+
+git checkout main
+git pull origin main
+
+git merge rama
