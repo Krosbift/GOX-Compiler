@@ -10,3 +10,7 @@ git checkout main
 git pull origin main
 
 git merge rama
+
+solucionar conflictos si es que los hay
+
+git push origin main 
