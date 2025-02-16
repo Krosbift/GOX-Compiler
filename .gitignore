@@ -1,1 +1,3 @@
-**/__pycache__/
+# Excluye los archivos de caché de Python
+**/__pycache__
+**/*.pyc
