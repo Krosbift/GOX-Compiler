@@ -1,3 +1,7 @@
+print("hola mundo")
+print("katherin")
+print("santiago")
+
 def suma():
   a = 2  
   b = 2 
