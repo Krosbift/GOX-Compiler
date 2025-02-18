@@ -31,5 +31,3 @@ TOKEN_SPECS = [
     # Errors
     ('ERROR',      r'.')  # Cualquier otro carácter se marcará como error
 ]
-  
-  
