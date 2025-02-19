@@ -37,6 +37,9 @@ Reemplace `<ruta del archivo a usar>` con el nombre del archivo que desea proces
 python __main__.py .\factorize.gox
 ```
 
+## Nota: 
+    (Para las primeras versiones no será necesario usar ninguna librería, siendo así el entorno de Miniconda no es necesario o si ya tiene todo Python con sus librerías también puede usarlo así)
+
 ## Documentación
 
 1. **Funcionalidad del código y problemas durante el desarrollo**  

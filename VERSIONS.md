@@ -10,5 +10,6 @@
 
 ### Añadido
 - Analizador léxico implementado.
-- Instrucciones de uso y del proceso de desarrollo añadidos en `DOCUMENTATION.md`.
+- Instrucciones de uso y del proceso de desarrollo añadidas en `DOCUMENTATION.md`.
 - Implementación de mostrar excepciones si las hay o todos los tokens extraídos.
+
