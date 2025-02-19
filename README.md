@@ -30,9 +30,17 @@
 
 Para ejecutar la aplicación, asegúrese de estar en el directorio raíz del proyecto y ejecute el siguiente comando:
 ```bash
-python __main__.py <nombre del archivo a usar>
+python __main__.py <ruta del archivo a usar>
 ```
-Reemplace `<nombre del archivo a usar>` con el nombre del archivo que desea procesar con el compilador GOX. Por ejemplo:
+Reemplace `<ruta del archivo a usar>` con el nombre del archivo que desea procesar con el compilador GOX. Por ejemplo:
 ```bash
-python __main__.py ejemplo.gox
+python __main__.py .\factorize.gox
 ```
+
+## Documentación
+
+1. **Funcionalidad del código y problemas durante el desarrollo**  
+    Archivo `DOCUMENTATION.md`
+
+2. **Información del versionamiento**  
+    Archivo `VERSION.md`

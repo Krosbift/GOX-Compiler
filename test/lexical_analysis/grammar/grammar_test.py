@@ -1,11 +1,11 @@
 import sys
 import os
-from lexical_analysis.grammar.grammar import Grammar
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
 
 import unittest
 import re
+from src.lexical_analysis.grammar.grammar import Grammar
 
 class GrammarTest(unittest.TestCase):
   def test_comment(self):

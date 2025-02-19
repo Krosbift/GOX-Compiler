@@ -9,8 +9,7 @@ from src.lexical_analysis.scanner.file_scanner import FileScanner
 
 class FileScannerTest(unittest.TestCase):
     def setUp(self):
-        self.file_path = "factorize.gox"
-        self.file_reader = FileScanner(self.file_path)
+        self.file_path = "../../../factorize.gox"
 
     def test_read_file_success(self):
         """ 
@@ -58,7 +57,7 @@ class FileScannerTest(unittest.TestCase):
         factorize(num);
         """
         with patch("builtins.open", mock_open(read_data=mock_content)):
-            content = self.file_reader.read_file()
+            content = FileScanner.read_file(self.file_path)
             self.assertIsInstance(content, str)
             self.assertTrue(len(content) > 0)
 
@@ -67,7 +66,7 @@ class FileScannerTest(unittest.TestCase):
         Verifica que se maneje correctamente el caso en que el archivo no se encuentra 
         """
         with patch("builtins.open", side_effect=FileNotFoundError):
-            content = self.file_reader.read_file()
+            content = FileScanner.read_file(self.file_path)
             self.assertEqual(content, "Error: Archivo no encontrado.")
 
     def test_read_file_exception(self):
@@ -75,7 +74,7 @@ class FileScannerTest(unittest.TestCase):
         Verifica que se maneje correctamente cualquier otra excepción 
         """
         with patch("builtins.open", side_effect=Exception("Unexpected error")):
-            content = self.file_reader.read_file()
+            content = FileScanner.read_file(self.file_path)
             self.assertTrue(content.startswith("Error:"))
 
 if __name__ == '__main__':
