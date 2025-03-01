@@ -1,8 +1,10 @@
-# GOX-Compiler 👀
+# <div align="center">GOX-Compiler 👀</div>
 
-## Guía para usar el aplicativo 📝
+![Imagen representativa para el compilador de GOX](./assets/images/GOX-compiler.jpg)
 
-![Screenshot of a comment on a GitHub issue showing an image, added in the Markdown, of an Octocat smiling and raising a tentacle.](https://github.com/Krosbift/GOX-Compiler.git/assets/images/GOX-compiler.jpg)
+## 📝 Guía para usar el aplicativo 
+
+
 ### Nota: 
 Las siguientes instrucciones, son para manejar un entorno de Miniconda, esto se suele hacer para tener un entorno de desarrollo aislado y no tener problemas con las dependencias de las librerías que se usan en el proyecto, sin embargo, las primeras versiones del proyecto no requieren de ninguna librería externa, por lo que si ya tiene Python instalado con todas las librerías necesarias puede usarlo sin problemas.
 
@@ -31,7 +33,7 @@ Las siguientes instrucciones, son para manejar un entorno de Miniconda, esto se 
     ```
     Esto instalará todas las dependencias necesarias listadas en el archivo `requirements.txt`.
 
-## Ejecución de la aplicación 🎬
+## 🎬 Ejecución de la aplicación 
 
 Para ejecutar la aplicación, asegúrese de estar en el directorio raíz del proyecto y ejecute el siguiente comando:
 ```bash
@@ -41,7 +43,7 @@ Reemplace `<ruta del archivo a usar>` con el nombre del archivo que desea proces
 ```bash
 python __main__.py .\factorize.gox
 ```
-## Documentación del proyecto 🗂️
+## 🗂️ Documentación del proyecto 
 
 1. **Funcionalidad del código y problemas durante el desarrollo**  
     [Documentación General](docs/DOCUMENTATION.md)  
