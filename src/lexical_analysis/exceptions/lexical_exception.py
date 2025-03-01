@@ -12,7 +12,7 @@ class LexicalException:
     format_errors()
     """
     def __init__(self, errors):
-        self.errors = "\n".join(errors)
+        self.errors = "".join(errors)
         self.format_errors()
 
     def format_errors(self):

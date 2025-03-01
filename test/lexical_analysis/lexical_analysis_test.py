@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 import unittest
 from unittest.mock import patch, MagicMock
-from src.lexical_analysis.lexical_analysis import LexicalAnalysis
+from lexical_analysis.lexer import LexicalAnalysis
 from src.lexical_analysis.exceptions.lexical_exception import LexicalException
 
 class TestLexicalAnalysis(unittest.TestCase):

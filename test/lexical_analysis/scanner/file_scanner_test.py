@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 
 import unittest
 from unittest.mock import patch, mock_open
-from src.lexical_analysis.scanner.file_scanner import FileScanner 
+from lexical_analysis.scanner.file_reader import FileScanner 
 
 class FileScannerTest(unittest.TestCase):
     def setUp(self):
