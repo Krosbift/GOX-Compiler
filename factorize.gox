@@ -14,7 +14,11 @@ func isprime(n int) bool {
     }
     var i int = 2;
     while i * i <= n {
-        if n / i == 0 {
+        var temp int = n;
+        while temp >= i {
+            temp = temp - i;
+        }
+        if temp == 0 {
             return false;
         }
         i = i + 1;
@@ -27,9 +31,17 @@ func factorize(n int) {
     print n;
 
     while n > 1 {
-        while n / factor == 0 {
+        var temp int = n;
+        while temp >= factor {
+            temp = temp - factor;
+        }
+        while temp == 0 {
             print factor;
             n = n / factor;
+            temp = n;
+            while temp >= factor {
+                temp = temp - factor;
+            }
         }
         factor = factor + 1;
     }

@@ -9,5 +9,5 @@ class Compiler:
     def get_tokens(self):
         lexer = Lexer(self.path_file)
         tokens = lexer.analyze()
-        parser = Parser(tokens)
-        print(parser.parse())
+        for x in tokens:
+            print(x)
