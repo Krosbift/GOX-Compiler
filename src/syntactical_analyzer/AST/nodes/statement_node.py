@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from ..node import Node
 
+
 @dataclass
 class Statement(Node):
     """
@@ -14,4 +15,5 @@ class Statement(Node):
     ###       / return_stmt
     ###       / print_stmt
     """
+
     pass
