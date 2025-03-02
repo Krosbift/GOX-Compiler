@@ -19,7 +19,7 @@ assignment <- location '=' expression ';'
 vardecl <- ('var' / 'const') ID type? ('=' expression)? ';'
 
 # Declaración de funciones
-funcdecl <- 'import'? 'func' ID '(' parameters ')' type '{' statement* '}'
+funcdecl <- 'import'? 'func' ID '(' parameters ')' type '{' statement* '}' => **Preguntar si el type es obligatorio o no**
 
 # Sentencia condicional
 if_stmt <- 'if' expression '{' statement* '}'
