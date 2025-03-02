@@ -28,6 +28,24 @@ ast = parser.parse()
 
 
 def ast_to_dict(node):
+    """
+    Convert an Abstract Syntax Tree (AST) node into a dictionary representation.
+
+    Args:
+        node: The AST node to convert. This can be an instance of Program, Assignment,
+              Expression, BinaryOperation, Number, or Identifier.
+
+    Returns:
+        A dictionary representation of the AST node. The structure of the dictionary
+        depends on the type of the node:
+        - Program: {"Program": [list of statements as dictionaries]}
+        - Assignment: {"Assignment": {"identifier": identifier name, "expression": expression as dictionary}}
+        - Expression: {"Expression": expression value as dictionary}
+        - BinaryOperation: {"BinaryOperation": {"left": left operand as dictionary, "operator": operator, "right": right operand as dictionary}}
+        - Number: {"Number": number value}
+        - Identifier: {"Identifier": identifier name}
+        - If the node type is unknown, returns "Unknown Node".
+    """
     if isinstance(node, Program):
         return {"Program": [ast_to_dict(stmt) for stmt in node.statements]}
     elif isinstance(node, Assignment):
@@ -54,4 +72,4 @@ def ast_to_dict(node):
     return "Unknown Node"
 
 
-print(json.dumps(ast_to_dict(ast), indent=4))
+print(json.dumps(ast_to_dict(ast), indent=2))
