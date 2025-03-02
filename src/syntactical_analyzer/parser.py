@@ -1,4 +1,4 @@
-from ..lexical_analysis.tokens.gox_tokens import Token
+from ..lexical_analyzer.tokens.gox_tokens import Token
 
 class ASTNode:
     pass

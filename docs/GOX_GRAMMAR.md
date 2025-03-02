@@ -45,7 +45,7 @@ type <- 'int' / 'float' / 'char' / 'bool'
 
 # Ubicación de valores (variables o direcciones)
 location <- ID
-          / '`' expression
+          / '`' expression => **Preguntar que significa bien esto**
 
 # Expresiones lógicas y aritméticas
 expression <- orterm ('||' orterm)*

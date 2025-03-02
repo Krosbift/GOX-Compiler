@@ -1,5 +1,4 @@
-from .lexical_analysis.lexer import Lexer
-from .sintactical_analisys.parser import Parser
+from .lexical_analyzer.lexer import Lexer
 
 class Compiler:
     def __init__(self, path_file: str):
