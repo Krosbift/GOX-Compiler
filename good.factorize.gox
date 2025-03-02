@@ -8,7 +8,7 @@
  ********************************************************************* *
  */
 
-func isprime(n int) bool {
+ func isprime(n int) bool {
     if n < 2 {
         return false;
     }
