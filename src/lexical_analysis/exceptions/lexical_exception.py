@@ -11,6 +11,7 @@ class LexicalException:
         Inicializa la LexicalException con una lista de errores y los formatea.
     format_errors()
     """
+
     def __init__(self, errors):
         self.errors = "".join(errors)
         self.format_errors()

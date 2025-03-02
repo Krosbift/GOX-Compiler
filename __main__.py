@@ -1,6 +1,7 @@
 import argparse
 from src.main import Main
 
+
 class Init:
     @staticmethod
     def parse_arguments():
@@ -26,6 +27,7 @@ class Init:
         if not args.path_file:
             raise SyntaxError("No file path provided for compilation")
         Main.main(args.path_file)
+
 
 if __name__ == "__main__":
     Init.init()

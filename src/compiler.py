@@ -1,4 +1,5 @@
 from .lexical_analysis.lexer import Lexer
+from .sintactical_analisys.parser import Parser
 
 class Compiler:
     def __init__(self, path_file: str):
@@ -7,5 +8,6 @@ class Compiler:
 
     def get_tokens(self):
         lexer = Lexer(self.path_file)
-        for x in lexer.analyze():
-            print(x)
+        tokens = lexer.analyze()
+        parser = Parser(tokens)
+        print(parser.parse())
