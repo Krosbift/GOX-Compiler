@@ -1,4 +1,4 @@
-from .compiler import Compiler
+from .compiler.compiler import Compiler
 
 
 class Main:

@@ -2,17 +2,6 @@ import re
 
 
 class Grammar:
-    """
-    Una clase para definir la gramática y las especificaciones de tokens para el análisis léxico del compilador GOX.
-    Atributos:
-        TOKEN_SPECS (lista de tuplas): Una lista de tuplas donde cada tupla contiene un nombre de token y su correspondiente patrón regex.
-    Métodos:
-        get_compiled_regex():
-            Compila las especificaciones de tokens en un solo patrón regex con grupos nombrados para cada tipo de token.
-            Retorna:
-                re.Pattern: Un patrón regex compilado que se puede usar para coincidir tokens en el código fuente.
-    """
-
     TOKEN_SPECS = [
         ("NEWLINE", r"\n+"),
         ("WHITESPACE", r"[ \t]+"),
@@ -66,17 +55,6 @@ class Grammar:
 
     @staticmethod
     def get_compiled_regex():
-        """
-        Compila las especificaciones de tokens en un solo patrón de expresión regular.
-
-        Este método construye un patrón regex uniendo todas las especificaciones de tokens
-        definidas en `Grammar.TOKEN_SPECS` con un grupo nombrado para cada token. El
-        patrón resultante se compila en un objeto regex.
-
-        Retorna:
-            re.Pattern: Un objeto de expresión regular compilado que se puede usar para
-            coincidir tokens en el texto de entrada.
-        """
         regex_pattern = "|".join(
             f"(?P<{name}>{pattern})" for name, pattern in Grammar.TOKEN_SPECS
         )

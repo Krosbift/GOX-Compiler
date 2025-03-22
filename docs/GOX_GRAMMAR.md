@@ -19,7 +19,7 @@ assignment <- location '=' expression ';'
 vardecl <- ('var' / 'const') ID type? ('=' expression)? ';'
 
 # Declaración de funciones
-funcdecl <- 'import'? 'func' ID '(' parameters ')' type '{' statement* '}' => **Preguntar si el type es obligatorio o no**
+funcdecl <- 'import'? 'func' ID '(' parameters ')' type '{' statement* '}'
 
 # Sentencia condicional
 if_stmt <- 'if' expression '{' statement* '}'
@@ -45,7 +45,7 @@ type <- 'int' / 'float' / 'char' / 'bool'
 
 # Ubicación de valores (variables o direcciones)
 location <- ID
-          / '`' expression => **Preguntar que significa bien esto**
+          / '`' expression
 
 # Expresiones lógicas y aritméticas
 expression <- orterm ('||' orterm)*

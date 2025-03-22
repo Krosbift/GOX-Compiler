@@ -1,5 +1,6 @@
 from .lexical_analyzer.lexer import Lexer
 
+
 class Compiler:
     def __init__(self, path_file: str):
         self.path_file = path_file
@@ -8,5 +9,3 @@ class Compiler:
     def get_tokens(self):
         lexer = Lexer(self.path_file)
         tokens = lexer.analyze()
-        for x in tokens:
-            print(x)
