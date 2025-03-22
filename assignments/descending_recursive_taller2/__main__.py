@@ -18,7 +18,7 @@ from assignments.descending_recursive_taller2.parser.parser import (
 
 code = """
     a = 1 + 2 * 3 / 4 - 5;
-    a * 78;
+    a * 78 + 2;
     b = 14 / 35;
     - (a * b);
 """
