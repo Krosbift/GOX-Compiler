@@ -1,0 +1,425 @@
+{
+    "type": "Program",
+    "statements": [
+        {
+            "type": "FuncDecl",
+            "is_import": false,
+            "identifier": "isprime",
+            "parameters": {
+                "type": "Parameters",
+                "params": [
+                    [
+                        "n",
+                        "int"
+                    ]
+                ]
+            },
+            "return_type": "bool",
+            "body": [
+                {
+                    "type": "IfStmt",
+                    "condition": {
+                        "type": "BinaryOp",
+                        "left": {
+                            "type": "IdentifierLocation",
+                            "name": "n"
+                        },
+                        "op": "<",
+                        "right": {
+                            "type": "Literal",
+                            "value": "2",
+                            "type_token": "INTEGER"
+                        }
+                    },
+                    "then_block": [
+                        {
+                            "type": "ReturnStmt",
+                            "expression": {
+                                "type": "Literal",
+                                "value": "false",
+                                "type_token": "FALSE"
+                            }
+                        }
+                    ],
+                    "else_block": null
+                },
+                {
+                    "type": "VarDecl",
+                    "kind": "VAR",
+                    "identifier": "i",
+                    "var_type": "int",
+                    "initializer": {
+                        "type": "Literal",
+                        "value": "2",
+                        "type_token": "INTEGER"
+                    }
+                },
+                {
+                    "type": "WhileStmt",
+                    "condition": {
+                        "type": "BinaryOp",
+                        "left": {
+                            "type": "BinaryOp",
+                            "left": {
+                                "type": "IdentifierLocation",
+                                "name": "i"
+                            },
+                            "op": "*",
+                            "right": {
+                                "type": "IdentifierLocation",
+                                "name": "i"
+                            }
+                        },
+                        "op": "<=",
+                        "right": {
+                            "type": "IdentifierLocation",
+                            "name": "n"
+                        }
+                    },
+                    "body": [
+                        {
+                            "type": "VarDecl",
+                            "kind": "VAR",
+                            "identifier": "temp",
+                            "var_type": "int",
+                            "initializer": {
+                                "type": "IdentifierLocation",
+                                "name": "n"
+                            }
+                        },
+                        {
+                            "type": "WhileStmt",
+                            "condition": {
+                                "type": "BinaryOp",
+                                "left": {
+                                    "type": "IdentifierLocation",
+                                    "name": "temp"
+                                },
+                                "op": ">=",
+                                "right": {
+                                    "type": "IdentifierLocation",
+                                    "name": "i"
+                                }
+                            },
+                            "body": [
+                                {
+                                    "type": "Assignment",
+                                    "location": {
+                                        "type": "IdentifierLocation",
+                                        "name": "temp"
+                                    },
+                                    "expression": {
+                                        "type": "BinaryOp",
+                                        "left": {
+                                            "type": "IdentifierLocation",
+                                            "name": "temp"
+                                        },
+                                        "op": "-",
+                                        "right": {
+                                            "type": "IdentifierLocation",
+                                            "name": "i"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "IfStmt",
+                            "condition": {
+                                "type": "BinaryOp",
+                                "left": {
+                                    "type": "IdentifierLocation",
+                                    "name": "temp"
+                                },
+                                "op": "==",
+                                "right": {
+                                    "type": "Literal",
+                                    "value": "0",
+                                    "type_token": "INTEGER"
+                                }
+                            },
+                            "then_block": [
+                                {
+                                    "type": "ReturnStmt",
+                                    "expression": {
+                                        "type": "Literal",
+                                        "value": "false",
+                                        "type_token": "FALSE"
+                                    }
+                                }
+                            ],
+                            "else_block": null
+                        },
+                        {
+                            "type": "Assignment",
+                            "location": {
+                                "type": "IdentifierLocation",
+                                "name": "i"
+                            },
+                            "expression": {
+                                "type": "BinaryOp",
+                                "left": {
+                                    "type": "IdentifierLocation",
+                                    "name": "i"
+                                },
+                                "op": "+",
+                                "right": {
+                                    "type": "Literal",
+                                    "value": "1",
+                                    "type_token": "INTEGER"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "ReturnStmt",
+                    "expression": {
+                        "type": "Literal",
+                        "value": "true",
+                        "type_token": "TRUE"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "FuncDecl",
+            "is_import": false,
+            "identifier": "factorize",
+            "parameters": {
+                "type": "Parameters",
+                "params": [
+                    [
+                        "n",
+                        "int"
+                    ]
+                ]
+            },
+            "return_type": "int",
+            "body": [
+                {
+                    "type": "VarDecl",
+                    "kind": "VAR",
+                    "identifier": "factor",
+                    "var_type": "int",
+                    "initializer": {
+                        "type": "Literal",
+                        "value": "2",
+                        "type_token": "INTEGER"
+                    }
+                },
+                {
+                    "type": "PrintStmt",
+                    "expression": {
+                        "type": "IdentifierLocation",
+                        "name": "n"
+                    }
+                },
+                {
+                    "type": "WhileStmt",
+                    "condition": {
+                        "type": "BinaryOp",
+                        "left": {
+                            "type": "IdentifierLocation",
+                            "name": "n"
+                        },
+                        "op": ">",
+                        "right": {
+                            "type": "Literal",
+                            "value": "1",
+                            "type_token": "INTEGER"
+                        }
+                    },
+                    "body": [
+                        {
+                            "type": "VarDecl",
+                            "kind": "VAR",
+                            "identifier": "temp",
+                            "var_type": "int",
+                            "initializer": {
+                                "type": "IdentifierLocation",
+                                "name": "n"
+                            }
+                        },
+                        {
+                            "type": "WhileStmt",
+                            "condition": {
+                                "type": "BinaryOp",
+                                "left": {
+                                    "type": "IdentifierLocation",
+                                    "name": "temp"
+                                },
+                                "op": ">=",
+                                "right": {
+                                    "type": "IdentifierLocation",
+                                    "name": "factor"
+                                }
+                            },
+                            "body": [
+                                {
+                                    "type": "Assignment",
+                                    "location": {
+                                        "type": "IdentifierLocation",
+                                        "name": "temp"
+                                    },
+                                    "expression": {
+                                        "type": "BinaryOp",
+                                        "left": {
+                                            "type": "IdentifierLocation",
+                                            "name": "temp"
+                                        },
+                                        "op": "-",
+                                        "right": {
+                                            "type": "IdentifierLocation",
+                                            "name": "factor"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "type": "WhileStmt",
+                            "condition": {
+                                "type": "BinaryOp",
+                                "left": {
+                                    "type": "IdentifierLocation",
+                                    "name": "temp"
+                                },
+                                "op": "==",
+                                "right": {
+                                    "type": "Literal",
+                                    "value": "0",
+                                    "type_token": "INTEGER"
+                                }
+                            },
+                            "body": [
+                                {
+                                    "type": "PrintStmt",
+                                    "expression": {
+                                        "type": "IdentifierLocation",
+                                        "name": "factor"
+                                    }
+                                },
+                                {
+                                    "type": "Assignment",
+                                    "location": {
+                                        "type": "IdentifierLocation",
+                                        "name": "n"
+                                    },
+                                    "expression": {
+                                        "type": "BinaryOp",
+                                        "left": {
+                                            "type": "IdentifierLocation",
+                                            "name": "n"
+                                        },
+                                        "op": "/",
+                                        "right": {
+                                            "type": "IdentifierLocation",
+                                            "name": "factor"
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "Assignment",
+                                    "location": {
+                                        "type": "IdentifierLocation",
+                                        "name": "temp"
+                                    },
+                                    "expression": {
+                                        "type": "IdentifierLocation",
+                                        "name": "n"
+                                    }
+                                },
+                                {
+                                    "type": "WhileStmt",
+                                    "condition": {
+                                        "type": "BinaryOp",
+                                        "left": {
+                                            "type": "IdentifierLocation",
+                                            "name": "temp"
+                                        },
+                                        "op": ">=",
+                                        "right": {
+                                            "type": "IdentifierLocation",
+                                            "name": "factor"
+                                        }
+                                    },
+                                    "body": [
+                                        {
+                                            "type": "Assignment",
+                                            "location": {
+                                                "type": "IdentifierLocation",
+                                                "name": "temp"
+                                            },
+                                            "expression": {
+                                                "type": "BinaryOp",
+                                                "left": {
+                                                    "type": "IdentifierLocation",
+                                                    "name": "temp"
+                                                },
+                                                "op": "-",
+                                                "right": {
+                                                    "type": "IdentifierLocation",
+                                                    "name": "factor"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Assignment",
+                            "location": {
+                                "type": "IdentifierLocation",
+                                "name": "factor"
+                            },
+                            "expression": {
+                                "type": "BinaryOp",
+                                "left": {
+                                    "type": "IdentifierLocation",
+                                    "name": "factor"
+                                },
+                                "op": "+",
+                                "right": {
+                                    "type": "Literal",
+                                    "value": "1",
+                                    "type_token": "INTEGER"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "ReturnStmt",
+                    "expression": {
+                        "type": "Literal",
+                        "value": "0",
+                        "type_token": "INTEGER"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "VarDecl",
+            "kind": "VAR",
+            "identifier": "num",
+            "var_type": "int",
+            "initializer": {
+                "type": "Literal",
+                "value": "21",
+                "type_token": "INTEGER"
+            }
+        },
+        {
+            "type": "FunctionCall",
+            "name": "factorize",
+            "arguments": [
+                {
+                    "type": "IdentifierLocation",
+                    "name": "num"
+                }
+            ]
+        }
+    ]
+}

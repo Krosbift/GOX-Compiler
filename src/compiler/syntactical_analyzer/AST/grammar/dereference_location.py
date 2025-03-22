@@ -4,5 +4,10 @@ from ..nodes.statement_node import Statement
 
 @dataclass
 class DereferenceLocation(Statement):
+    """
+    ### '`' expression
+    """
+
     def __init__(self, expression):
+        self.type = "DereferenceLocation"
         self.expression = expression

@@ -4,4 +4,9 @@ from ..nodes.statement_node import Statement
 
 @dataclass
 class BreakStmt(Statement):
-    pass
+    """
+    ### 'break' ';'
+    """
+
+    def __init__(self):
+        self.type = "BreakStmt"

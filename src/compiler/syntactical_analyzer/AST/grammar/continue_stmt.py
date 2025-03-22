@@ -4,4 +4,9 @@ from ..nodes.statement_node import Statement
 
 @dataclass
 class ContinueStmt(Statement):
-    pass
+    """
+    ### 'continue' ';'
+    """
+
+    def __init__(self):
+        self.type = "ContinueStmt"

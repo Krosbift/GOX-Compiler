@@ -1,25 +1,17 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from ..nodes.statement_node import Statement
-from ..types.parameters_types import ParametersType
-from ..types.data_types import DataType
 
 
 @dataclass
-class Funcdecl(Statement):
+class FuncDecl(Statement):
     """
     ### 'import'? 'func' ID '(' parameters ')' type '{' statement* '}'
     """
 
-    def __init__(
-        self,
-        is_import: bool,
-        identifier: str,
-        parameters: list[ParametersType],
-        return_type: DataType,
-        body: list[Statement] = field(default_factory=list),
-    ):
-        self.is_import: bool = is_import
-        self.identifier: str = identifier
-        self.parameters: list[ParametersType] = parameters
-        self.return_type: DataType = return_type
-        self.body: list[Statement] = body
+    def __init__(self, is_import, identifier, parameters, return_type, body):
+        self.type = "FuncDecl"
+        self.is_import = is_import
+        self.identifier = identifier
+        self.parameters = parameters
+        self.return_type = return_type
+        self.body = body
