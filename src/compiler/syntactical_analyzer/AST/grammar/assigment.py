@@ -9,5 +9,6 @@ class Assigment(Statement):
     ### location '=' expression ';'
     """
 
-    location: str | Expression
-    expression: Expression
+    def __init__(self, location: str | Expression, expression: Expression):
+        self.location: str | Expression = location
+        self.expression: Expression = expression

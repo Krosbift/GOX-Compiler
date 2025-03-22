@@ -9,4 +9,5 @@ class Program(Node):
     ### statement* EOF
     """
 
-    statements: list[Statement] = field(default_factory=list)
+    def __init__(self, statements: list[Statement] = field(default_factory=list)):
+        self.statements: list[Statement] = statements
