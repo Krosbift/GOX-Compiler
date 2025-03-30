@@ -7,6 +7,3 @@ class BreakStmt(Statement):
     """
     ### 'break' ';'
     """
-
-    def __init__(self):
-        self.type = "BreakStmt"

@@ -9,6 +9,5 @@ class Cast(Statement):
     """
 
     def __init__(self, cast_type, expression):
-        self.type = "Cast"
         self.cast_type = cast_type
         self.expression = expression

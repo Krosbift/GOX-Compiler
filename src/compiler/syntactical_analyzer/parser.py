@@ -1,3 +1,4 @@
+from .helper import Helper
 from .AST.grammar.program import Program
 from .AST.grammar.assigment import Assignment
 from .AST.grammar.vardecl import VarDecl
@@ -17,6 +18,7 @@ from .AST.grammar.dereference_location import DereferenceLocation
 from .AST.grammar.function_call import FunctionCall
 from .AST.grammar.cast import Cast
 
+
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens
@@ -24,6 +26,9 @@ class Parser:
         self.next_token()
 
     def next_token(self):
+        """
+        Recupera el siguiente token de la lista de tokens y actualiza el token actual.
+        """
         if self.tokens:
             self.current_token = self.tokens.pop(0)
         else:
@@ -33,19 +38,33 @@ class Parser:
         return self.program()
 
     def program(self):
+        """
+        ### statement* EOF
+        """
         statements = []
         while self.current_token and self.current_token.type != "EOF":
             statements.append(self.statement())
         return Program(statements)
 
     def statement(self):
+        """
+        ### statement <- assignment
+        ###           / vardecl
+        ###           / funcdecl
+        ###           / if_stmt
+        ###           / while_stmt
+        ###           / break_stmt
+        ###           / continue_stmt
+        ###           / return_stmt
+        ###           / print_stmt
+        """
         if self.current_token.type == "ID":
-            if self.peek_token().type == "ASSIGN":
+            if Helper.peek_token(self).type == "ASSIGN":
                 return self.assignment()
-            elif self.peek_token().type == "LPAREN":
+            elif Helper.peek_token(self).type == "LPAREN":
                 return self.func_call()
             else:
-                self.error(f"Unexpected token after ID: {self.peek_token()}")
+                Helper.error(f"Unexpected token after ID: {Helper.peek_token(self)}")
         elif self.current_token.type in ("VAR", "CONST"):
             return self.vardecl()
         elif self.current_token.type == "FUNC":
@@ -63,20 +82,26 @@ class Parser:
         elif self.current_token.type == "PRINT":
             return self.print_stmt()
         else:
-            self.error(f"Unexpected token: {self.current_token}")
+            Helper.error(f"Unexpected token: {self.current_token}")
 
     def assignment(self):
+        """
+        ### location '=' expression ';'
+        """
         location = self.location()
-        self.expect("ASSIGN")
+        Helper.expect(self, "ASSIGN")
         expression = self.expression()
-        self.expect("SEMI")
+        Helper.expect(self, "SEMI")
         return Assignment(location, expression)
 
     def vardecl(self):
+        """
+        ### ('var' / 'const') ID type? ('=' expression)? ';'
+        """
         kind = self.current_token.type
         self.next_token()
         identifier = self.current_token.value
-        self.expect("ID")
+        Helper.expect(self, "ID")
         var_type = None
         if self.current_token.type in ("INT", "FLOAT_TYPE", "CHAR_TYPE", "BOOL"):
             var_type = self.current_token.value
@@ -85,90 +110,114 @@ class Parser:
         if self.current_token.type == "ASSIGN":
             self.next_token()
             initializer = self.expression()
-        self.expect("SEMI")
+        Helper.expect(self, "SEMI")
         return VarDecl(kind, identifier, var_type, initializer)
 
     def funcdecl(self):
+        """
+        ### 'import'? 'func' ID '(' parameters ')' type '{' statement* '}'
+        """
         is_import = False
         if self.current_token.type == "IMPORT":
             is_import = True
             self.next_token()
-        self.expect("FUNC")
+        Helper.expect(self, "FUNC")
         identifier = self.current_token.value
-        self.expect("ID")
-        self.expect("LPAREN")
+        Helper.expect(self, "ID")
+        Helper.expect(self, "LPAREN")
         parameters = self.parameters()
-        self.expect("RPAREN")
-        return_type = self.expect_type()
-        self.expect("LBRACE")
+        Helper.expect(self, "RPAREN")
+        return_type = Helper.expect_type(self)
+        Helper.expect(self, "LBRACE")
         body = []
         while self.current_token.type != "RBRACE":
             body.append(self.statement())
-        self.expect("RBRACE")
+        Helper.expect(self, "RBRACE")
         return FuncDecl(is_import, identifier, parameters, return_type, body)
 
     def if_stmt(self):
-        self.expect("IF")
+        """
+        ### 'if' expression '{' statement* '}' ('else' '{' statement* '}')?
+        """
+        Helper.expect(self, "IF")
         condition = self.expression()
-        self.expect("LBRACE")
+        Helper.expect(self, "LBRACE")
         then_block = []
         while self.current_token.type != "RBRACE":
             then_block.append(self.statement())
-        self.expect("RBRACE")
+        Helper.expect(self, "RBRACE")
         else_block = None
         if self.current_token.type == "ELSE":
             self.next_token()
-            self.expect("LBRACE")
+            Helper.expect(self, "LBRACE")
             else_block = []
             while self.current_token.type != "RBRACE":
                 else_block.append(self.statement())
-            self.expect("RBRACE")
+            Helper.expect(self, "RBRACE")
         return IfStmt(condition, then_block, else_block)
 
     def while_stmt(self):
-        self.expect("WHILE")
+        """
+        ### 'while' expression '{' statement* '}'
+        """
+        Helper.expect(self, "WHILE")
         condition = self.expression()
-        self.expect("LBRACE")
+        Helper.expect(self, "LBRACE")
         body = []
         while self.current_token.type != "RBRACE":
             body.append(self.statement())
-        self.expect("RBRACE")
+        Helper.expect(self, "RBRACE")
         return WhileStmt(condition, body)
 
     def break_stmt(self):
-        self.expect("BREAK")
-        self.expect("SEMI")
+        """
+        ### 'break' ';'
+        """
+        Helper.expect(self, "BREAK")
+        Helper.expect(self, "SEMI")
         return BreakStmt()
 
     def continue_stmt(self):
-        self.expect("CONTINUE")
-        self.expect("SEMI")
+        """
+        ### 'continue' ';'
+        """
+        Helper.expect(self, "CONTINUE")
+        Helper.expect(self, "SEMI")
         return ContinueStmt()
 
     def return_stmt(self):
-        self.expect("RETURN")
+        """
+        ### 'return' expression ';'
+        """
+        Helper.expect(self, "RETURN")
         expression = self.expression()
-        self.expect("SEMI")
+        Helper.expect(self, "SEMI")
         return ReturnStmt(expression)
 
     def print_stmt(self):
-        self.expect("PRINT")
+        """
+        ### 'print' expression ';'
+        """
+        Helper.expect(self, "PRINT")
         expression = self.expression()
-        self.expect("SEMI")
+        Helper.expect(self, "SEMI")
         return PrintStmt(expression)
 
     def parameters(self):
+        """
+        ### ID type (',' ID type)* / empty
+        """
         params = []
         if self.current_token.type != "RPAREN":
             param_name = self.current_token.value
-            self.expect("ID")
-            param_type = self.expect_type()
+            Helper.expect(self, "ID")
+            param_type = Helper.expect_type(self)
             params.append((param_name, param_type))
             while self.current_token.type == "COMMA":
                 self.next_token()
                 param_name = self.current_token.value
-                self.expect("ID")
-                param_type = self.expect_type()
+                Helper.expect(self, "ID")
+                param_type = Helper.expect_type(self)
                 params.append((param_name, param_type))
         return Parameters(params)
 
@@ -176,6 +225,9 @@ class Parser:
         return self.orterm()
 
     def orterm(self):
+        """
+        ### expression ('||') expression
+        """
         node = self.andterm()
         while self.current_token.type == "LOR":
             op = self.current_token.value
@@ -184,6 +236,9 @@ class Parser:
         return node
 
     def andterm(self):
+        """
+        ### expression ('&&') expression
+        """
         node = self.relterm()
         while self.current_token.type == "LAND":
             op = self.current_token.value
@@ -192,6 +247,9 @@ class Parser:
         return node
 
     def relterm(self):
+        """
+        ### expression ('<' / '>' / '<=' / '>=' / '==' / '!=') expression
+        """
         node = self.addterm()
         while self.current_token.type in ("LT", "GT", "LE", "GE", "EQ", "NE"):
             op = self.current_token.value
@@ -200,6 +258,9 @@ class Parser:
         return node
 
     def addterm(self):
+        """
+        ### expression ('+' / '-') expression
+        """
         node = self.factor()
         while self.current_token.type in ("PLUS", "MINUS"):
             op = self.current_token.value
@@ -208,6 +269,9 @@ class Parser:
         return node
 
     def factor(self):
+        """
+        ### expression ('*' / '/') expression
+        """
         node = self.primary()
         while self.current_token.type in ("TIMES", "DIVIDE"):
             op = self.current_token.value
@@ -216,6 +280,12 @@ class Parser:
         return node
 
     def primary(self):
+        """
+        ### ('+' / '-' / '^') expression |
+        ### INTEGER / FLOAT / CHAR / bool |
+        ### type '(' expression ')' |
+        ### 'int' / 'float' / 'char' / 'bool' |
+        """
         token = self.current_token
         if token.type in ("INTEGER", "FLOAT", "CHAR", "TRUE", "FALSE"):
             self.next_token()
@@ -226,14 +296,14 @@ class Parser:
         elif token.type == "LPAREN":
             self.next_token()
             expr = self.expression()
-            self.expect("RPAREN")
+            Helper.expect(self, "RPAREN")
             return expr
         elif token.type in ("INT", "FLOAT_TYPE", "CHAR_TYPE", "BOOL"):
             cast_type = token.value
             self.next_token()
-            self.expect("LPAREN")
+            Helper.expect(self, "LPAREN")
             expr = self.expression()
-            self.expect("RPAREN")
+            Helper.expect(self, "RPAREN")
             return Cast(cast_type, expr)
         elif token.type == "ID":
             name = token.value
@@ -241,7 +311,7 @@ class Parser:
             if self.current_token.type == "LPAREN":
                 self.next_token()
                 args = self.arguments()
-                self.expect("RPAREN")
+                Helper.expect(self, "RPAREN")
                 return FunctionCall(name, args)
             else:
                 return IdentifierLocation(name)
@@ -250,7 +320,7 @@ class Parser:
             expr = self.expression()
             return DereferenceLocation(expr)
         else:
-            self.error(f"Unexpected token in primary: {token}")
+            Helper.error(f"Unexpected token in primary: {token}")
 
     def arguments(self):
         args = []
@@ -262,6 +332,9 @@ class Parser:
         return args
 
     def location(self):
+        """
+        ### ID | '`' expression
+        """
         if self.current_token.type == "ID":
             name = self.current_token.value
             self.next_token()
@@ -271,38 +344,16 @@ class Parser:
             expr = self.expression()
             return DereferenceLocation(expr)
         else:
-            self.error(f"Unexpected token in location: {self.current_token}")
-
-    def expect(self, token_type):
-        if self.current_token.type == token_type:
-            value = self.current_token.value
-            self.next_token()
-            return value
-        else:
-            self.error(f"Expected token {token_type}, but got {self.current_token}")
-
-    def expect_type(self):
-        if self.current_token.type in ("INT", "FLOAT_TYPE", "CHAR_TYPE", "BOOL"):
-            value = self.current_token.value
-            self.next_token()
-            return value
-        else:
-            self.error(f"Expected type token, but got {self.current_token}")
-
-    def error(self, message):
-        raise SyntaxError(message)
-
-    def peek_token(self):
-        if self.tokens:
-            return self.tokens[0]
-        else:
-            return None
+            Helper.error(f"Unexpected token in location: {self.current_token}")
 
     def func_call(self):
+        """
+        ### ID '(' arguments ')'
+        """
         name = self.current_token.value
         self.next_token()
-        self.expect("LPAREN")
+        Helper.expect(self, "LPAREN")
         args = self.arguments()
-        self.expect("RPAREN")
-        self.expect("SEMI")
+        Helper.expect(self, "RPAREN")
+        Helper.expect(self, "SEMI")
         return FunctionCall(name, args)

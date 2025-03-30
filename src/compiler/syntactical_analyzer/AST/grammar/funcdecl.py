@@ -9,7 +9,6 @@ class FuncDecl(Statement):
     """
 
     def __init__(self, is_import, identifier, parameters, return_type, body):
-        self.type = "FuncDecl"
         self.is_import = is_import
         self.identifier = identifier
         self.parameters = parameters

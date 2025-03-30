@@ -1,6 +1,8 @@
+import os
 from .lexical_analyzer.lexer import Lexer
 from .syntactical_analyzer.parser import Parser
 from ..shared.json.ast_to_json import ASTtoJSON
+
 
 class Compiler:
     def __init__(self, path_file):
@@ -15,4 +17,7 @@ class Compiler:
     def get_ast(self):
         parser = Parser(self.tokens)
         self.ast = parser.parse()
-        ASTtoJSON.convert_to_json(self.ast)
+        ASTtoJSON.convert_to_json(self.ast, self.get_filename())
+
+    def get_filename(self):
+        return os.path.basename(self.path_file)

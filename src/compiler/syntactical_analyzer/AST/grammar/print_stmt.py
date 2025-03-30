@@ -9,5 +9,4 @@ class PrintStmt(Statement):
     """
 
     def __init__(self, expression):
-        self.type = "PrintStmt"
         self.expression = expression

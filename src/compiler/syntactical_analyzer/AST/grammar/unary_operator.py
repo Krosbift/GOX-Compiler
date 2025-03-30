@@ -9,6 +9,5 @@ class UnaryOp(Statement):
     """
 
     def __init__(self, op, expr):
-        self.type = "UnaryOp"
         self.op = op
         self.expr = expr

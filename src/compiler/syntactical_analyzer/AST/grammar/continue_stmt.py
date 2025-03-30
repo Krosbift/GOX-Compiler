@@ -7,6 +7,3 @@ class ContinueStmt(Statement):
     """
     ### 'continue' ';'
     """
-
-    def __init__(self):
-        self.type = "ContinueStmt"

@@ -9,6 +9,5 @@ class Assignment(Statement):
     """
 
     def __init__(self, location, expression):
-        self.type = "Assignment"
         self.location = location
         self.expression = expression

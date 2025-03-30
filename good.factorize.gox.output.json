@@ -1,15 +1,19 @@
 {
-    "type": "Program",
+    "__class__": "Program",
     "statements": [
         {
-            "type": "FuncDecl",
+            "__class__": "FuncDecl",
             "is_import": false,
             "identifier": "isprime",
             "parameters": {
-                "type": "Parameters",
+                "__class__": "Parameters",
                 "params": [
                     [
                         "n",
+                        "int"
+                    ],
+                    [
+                        "m",
                         "int"
                     ]
                 ]
@@ -17,25 +21,25 @@
             "return_type": "bool",
             "body": [
                 {
-                    "type": "IfStmt",
+                    "__class__": "IfStmt",
                     "condition": {
-                        "type": "BinaryOp",
+                        "__class__": "BinaryOp",
                         "left": {
-                            "type": "IdentifierLocation",
+                            "__class__": "IdentifierLocation",
                             "name": "n"
                         },
                         "op": "<",
                         "right": {
-                            "type": "Literal",
+                            "__class__": "Literal",
                             "value": "2",
                             "type_token": "INTEGER"
                         }
                     },
                     "then_block": [
                         {
-                            "type": "ReturnStmt",
+                            "__class__": "ReturnStmt",
                             "expression": {
-                                "type": "Literal",
+                                "__class__": "Literal",
                                 "value": "false",
                                 "type_token": "FALSE"
                             }
@@ -44,79 +48,79 @@
                     "else_block": null
                 },
                 {
-                    "type": "VarDecl",
+                    "__class__": "VarDecl",
                     "kind": "VAR",
                     "identifier": "i",
                     "var_type": "int",
                     "initializer": {
-                        "type": "Literal",
+                        "__class__": "Literal",
                         "value": "2",
                         "type_token": "INTEGER"
                     }
                 },
                 {
-                    "type": "WhileStmt",
+                    "__class__": "WhileStmt",
                     "condition": {
-                        "type": "BinaryOp",
+                        "__class__": "BinaryOp",
                         "left": {
-                            "type": "BinaryOp",
+                            "__class__": "BinaryOp",
                             "left": {
-                                "type": "IdentifierLocation",
+                                "__class__": "IdentifierLocation",
                                 "name": "i"
                             },
                             "op": "*",
                             "right": {
-                                "type": "IdentifierLocation",
+                                "__class__": "IdentifierLocation",
                                 "name": "i"
                             }
                         },
                         "op": "<=",
                         "right": {
-                            "type": "IdentifierLocation",
+                            "__class__": "IdentifierLocation",
                             "name": "n"
                         }
                     },
                     "body": [
                         {
-                            "type": "VarDecl",
+                            "__class__": "VarDecl",
                             "kind": "VAR",
                             "identifier": "temp",
                             "var_type": "int",
                             "initializer": {
-                                "type": "IdentifierLocation",
+                                "__class__": "IdentifierLocation",
                                 "name": "n"
                             }
                         },
                         {
-                            "type": "WhileStmt",
+                            "__class__": "WhileStmt",
                             "condition": {
-                                "type": "BinaryOp",
+                                "__class__": "BinaryOp",
                                 "left": {
-                                    "type": "IdentifierLocation",
+                                    "__class__": "IdentifierLocation",
                                     "name": "temp"
                                 },
                                 "op": ">=",
                                 "right": {
-                                    "type": "IdentifierLocation",
+                                    "__class__": "IdentifierLocation",
                                     "name": "i"
                                 }
                             },
                             "body": [
                                 {
-                                    "type": "Assignment",
+                                    "__class__": "Assignment",
                                     "location": {
-                                        "type": "IdentifierLocation",
+                                        "__class__": "IdentifierLocation",
                                         "name": "temp"
                                     },
                                     "expression": {
-                                        "type": "BinaryOp",
+                                        "__class__": "BinaryOp",
                                         "left": {
-                                            "type": "IdentifierLocation",
+                                            "__class__": "IdentifierLocation",
                                             "name": "temp"
                                         },
                                         "op": "-",
                                         "right": {
-                                            "type": "IdentifierLocation",
+                                            "__class__": "IdentifierLocation",
                                             "name": "i"
                                         }
                                     }
@@ -124,25 +128,25 @@
                             ]
                         },
                         {
-                            "type": "IfStmt",
+                            "__class__": "IfStmt",
                             "condition": {
-                                "type": "BinaryOp",
+                                "__class__": "BinaryOp",
                                 "left": {
-                                    "type": "IdentifierLocation",
+                                    "__class__": "IdentifierLocation",
                                     "name": "temp"
                                 },
                                 "op": "==",
                                 "right": {
-                                    "type": "Literal",
+                                    "__class__": "Literal",
                                     "value": "0",
                                     "type_token": "INTEGER"
                                 }
                             },
                             "then_block": [
                                 {
-                                    "type": "ReturnStmt",
+                                    "__class__": "ReturnStmt",
                                     "expression": {
-                                        "type": "Literal",
+                                        "__class__": "Literal",
                                         "value": "false",
                                         "type_token": "FALSE"
                                     }
@@ -151,20 +155,20 @@
                             "else_block": null
                         },
                         {
-                            "type": "Assignment",
+                            "__class__": "Assignment",
                             "location": {
-                                "type": "IdentifierLocation",
+                                "__class__": "IdentifierLocation",
                                 "name": "i"
                             },
                             "expression": {
-                                "type": "BinaryOp",
+                                "__class__": "BinaryOp",
                                 "left": {
-                                    "type": "IdentifierLocation",
+                                    "__class__": "IdentifierLocation",
                                     "name": "i"
                                 },
                                 "op": "+",
                                 "right": {
-                                    "type": "Literal",
+                                    "__class__": "Literal",
                                     "value": "1",
                                     "type_token": "INTEGER"
                                 }
@@ -173,9 +177,9 @@
                     ]
                 },
                 {
-                    "type": "ReturnStmt",
+                    "__class__": "ReturnStmt",
                     "expression": {
-                        "type": "Literal",
+                        "__class__": "Literal",
                         "value": "true",
                         "type_token": "TRUE"
                     }
@@ -183,11 +187,11 @@
             ]
         },
         {
-            "type": "FuncDecl",
+            "__class__": "FuncDecl",
             "is_import": false,
             "identifier": "factorize",
             "parameters": {
-                "type": "Parameters",
+                "__class__": "Parameters",
                 "params": [
                     [
                         "n",
@@ -198,79 +202,79 @@
             "return_type": "int",
             "body": [
                 {
-                    "type": "VarDecl",
+                    "__class__": "VarDecl",
                     "kind": "VAR",
                     "identifier": "factor",
                     "var_type": "int",
                     "initializer": {
-                        "type": "Literal",
+                        "__class__": "Literal",
                         "value": "2",
                         "type_token": "INTEGER"
                     }
                 },
                 {
-                    "type": "PrintStmt",
+                    "__class__": "PrintStmt",
                     "expression": {
-                        "type": "IdentifierLocation",
+                        "__class__": "IdentifierLocation",
                         "name": "n"
                     }
                 },
                 {
-                    "type": "WhileStmt",
+                    "__class__": "WhileStmt",
                     "condition": {
-                        "type": "BinaryOp",
+                        "__class__": "BinaryOp",
                         "left": {
-                            "type": "IdentifierLocation",
+                            "__class__": "IdentifierLocation",
                             "name": "n"
                         },
                         "op": ">",
                         "right": {
-                            "type": "Literal",
+                            "__class__": "Literal",
                             "value": "1",
                             "type_token": "INTEGER"
                         }
                     },
                     "body": [
                         {
-                            "type": "VarDecl",
+                            "__class__": "VarDecl",
                             "kind": "VAR",
                             "identifier": "temp",
                             "var_type": "int",
                             "initializer": {
-                                "type": "IdentifierLocation",
+                                "__class__": "IdentifierLocation",
                                 "name": "n"
                             }
                         },
                         {
-                            "type": "WhileStmt",
+                            "__class__": "WhileStmt",
                             "condition": {
-                                "type": "BinaryOp",
+                                "__class__": "BinaryOp",
                                 "left": {
-                                    "type": "IdentifierLocation",
+                                    "__class__": "IdentifierLocation",
                                     "name": "temp"
                                 },
                                 "op": ">=",
                                 "right": {
-                                    "type": "IdentifierLocation",
+                                    "__class__": "IdentifierLocation",
                                     "name": "factor"
                                 }
                             },
                             "body": [
                                 {
-                                    "type": "Assignment",
+                                    "__class__": "Assignment",
                                     "location": {
-                                        "type": "IdentifierLocation",
+                                        "__class__": "IdentifierLocation",
                                         "name": "temp"
                                     },
                                     "expression": {
-                                        "type": "BinaryOp",
+                                        "__class__": "BinaryOp",
                                         "left": {
-                                            "type": "IdentifierLocation",
+                                            "__class__": "IdentifierLocation",
                                             "name": "temp"
                                         },
                                         "op": "-",
                                         "right": {
-                                            "type": "IdentifierLocation",
+                                            "__class__": "IdentifierLocation",
                                             "name": "factor"
                                         }
                                     }
@@ -278,88 +282,88 @@
                             ]
                         },
                         {
-                            "type": "WhileStmt",
+                            "__class__": "WhileStmt",
                             "condition": {
-                                "type": "BinaryOp",
+                                "__class__": "BinaryOp",
                                 "left": {
-                                    "type": "IdentifierLocation",
+                                    "__class__": "IdentifierLocation",
                                     "name": "temp"
                                 },
                                 "op": "==",
                                 "right": {
-                                    "type": "Literal",
+                                    "__class__": "Literal",
                                     "value": "0",
                                     "type_token": "INTEGER"
                                 }
                             },
                             "body": [
                                 {
-                                    "type": "PrintStmt",
+                                    "__class__": "PrintStmt",
                                     "expression": {
-                                        "type": "IdentifierLocation",
+                                        "__class__": "IdentifierLocation",
                                         "name": "factor"
                                     }
                                 },
                                 {
-                                    "type": "Assignment",
+                                    "__class__": "Assignment",
                                     "location": {
-                                        "type": "IdentifierLocation",
+                                        "__class__": "IdentifierLocation",
                                         "name": "n"
                                     },
                                     "expression": {
-                                        "type": "BinaryOp",
+                                        "__class__": "BinaryOp",
                                         "left": {
-                                            "type": "IdentifierLocation",
+                                            "__class__": "IdentifierLocation",
                                             "name": "n"
                                         },
                                         "op": "/",
                                         "right": {
-                                            "type": "IdentifierLocation",
+                                            "__class__": "IdentifierLocation",
                                             "name": "factor"
                                         }
                                     }
                                 },
                                 {
-                                    "type": "Assignment",
+                                    "__class__": "Assignment",
                                     "location": {
-                                        "type": "IdentifierLocation",
+                                        "__class__": "IdentifierLocation",
                                         "name": "temp"
                                     },
                                     "expression": {
-                                        "type": "IdentifierLocation",
+                                        "__class__": "IdentifierLocation",
                                         "name": "n"
                                     }
                                 },
                                 {
-                                    "type": "WhileStmt",
+                                    "__class__": "WhileStmt",
                                     "condition": {
-                                        "type": "BinaryOp",
+                                        "__class__": "BinaryOp",
                                         "left": {
-                                            "type": "IdentifierLocation",
+                                            "__class__": "IdentifierLocation",
                                             "name": "temp"
                                         },
                                         "op": ">=",
                                         "right": {
-                                            "type": "IdentifierLocation",
+                                            "__class__": "IdentifierLocation",
                                             "name": "factor"
                                         }
                                     },
                                     "body": [
                                         {
-                                            "type": "Assignment",
+                                            "__class__": "Assignment",
                                             "location": {
-                                                "type": "IdentifierLocation",
+                                                "__class__": "IdentifierLocation",
                                                 "name": "temp"
                                             },
                                             "expression": {
-                                                "type": "BinaryOp",
+                                                "__class__": "BinaryOp",
                                                 "left": {
-                                                    "type": "IdentifierLocation",
+                                                    "__class__": "IdentifierLocation",
                                                     "name": "temp"
                                                 },
                                                 "op": "-",
                                                 "right": {
-                                                    "type": "IdentifierLocation",
+                                                    "__class__": "IdentifierLocation",
                                                     "name": "factor"
                                                 }
                                             }
@@ -369,20 +373,20 @@
                             ]
                         },
                         {
-                            "type": "Assignment",
+                            "__class__": "Assignment",
                             "location": {
-                                "type": "IdentifierLocation",
+                                "__class__": "IdentifierLocation",
                                 "name": "factor"
                             },
                             "expression": {
-                                "type": "BinaryOp",
+                                "__class__": "BinaryOp",
                                 "left": {
-                                    "type": "IdentifierLocation",
+                                    "__class__": "IdentifierLocation",
                                     "name": "factor"
                                 },
                                 "op": "+",
                                 "right": {
-                                    "type": "Literal",
+                                    "__class__": "Literal",
                                     "value": "1",
                                     "type_token": "INTEGER"
                                 }
@@ -391,9 +395,9 @@
                     ]
                 },
                 {
-                    "type": "ReturnStmt",
+                    "__class__": "ReturnStmt",
                     "expression": {
-                        "type": "Literal",
+                        "__class__": "Literal",
                         "value": "0",
                         "type_token": "INTEGER"
                     }
@@ -401,22 +405,22 @@
             ]
         },
         {
-            "type": "VarDecl",
+            "__class__": "VarDecl",
             "kind": "VAR",
             "identifier": "num",
             "var_type": "int",
             "initializer": {
-                "type": "Literal",
+                "__class__": "Literal",
                 "value": "21",
                 "type_token": "INTEGER"
             }
         },
         {
-            "type": "FunctionCall",
+            "__class__": "FunctionCall",
             "name": "factorize",
             "arguments": [
                 {
-                    "type": "IdentifierLocation",
+                    "__class__": "IdentifierLocation",
                     "name": "num"
                 }
             ]

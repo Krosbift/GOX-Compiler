@@ -9,5 +9,4 @@ class IdentifierLocation(Statement):
     """
 
     def __init__(self, name):
-        self.type = "IdentifierLocation"
         self.name = name

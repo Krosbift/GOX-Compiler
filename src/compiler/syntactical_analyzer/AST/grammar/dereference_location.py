@@ -9,5 +9,4 @@ class DereferenceLocation(Statement):
     """
 
     def __init__(self, expression):
-        self.type = "DereferenceLocation"
         self.expression = expression

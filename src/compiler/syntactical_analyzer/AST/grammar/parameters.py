@@ -9,5 +9,4 @@ class Parameters(Statement):
     """
 
     def __init__(self, params):
-        self.type = "Parameters"
         self.params = params

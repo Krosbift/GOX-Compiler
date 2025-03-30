@@ -9,6 +9,5 @@ class Literal(Statement):
     """
 
     def __init__(self, value, type_token):
-        self.type = "Literal"
         self.value = value
         self.type_token = type_token

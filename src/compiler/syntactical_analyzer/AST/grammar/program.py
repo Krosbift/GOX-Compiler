@@ -9,5 +9,4 @@ class Program(Node):
     """
 
     def __init__(self, statements):
-        self.type = "Program"
         self.statements = statements

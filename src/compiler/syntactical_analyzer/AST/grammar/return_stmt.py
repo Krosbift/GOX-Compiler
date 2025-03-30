@@ -9,5 +9,4 @@ class ReturnStmt(Statement):
     """
 
     def __init__(self, expression):
-        self.type = "ReturnStmt"
         self.expression = expression

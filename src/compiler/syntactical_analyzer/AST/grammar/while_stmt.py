@@ -9,6 +9,5 @@ class WhileStmt(Statement):
     """
 
     def __init__(self, condition, body):
-        self.type = "WhileStmt"
         self.condition = condition
         self.body = body

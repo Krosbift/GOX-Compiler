@@ -15,5 +15,3 @@ class Statement(Node):
     ###       / return_stmt
     ###       / print_stmt
     """
-
-    pass
