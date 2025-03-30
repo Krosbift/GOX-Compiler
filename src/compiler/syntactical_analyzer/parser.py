@@ -147,13 +147,14 @@ class Parser:
             then_block.append(self.statement())
         Helper.expect(self, "RBRACE")
         else_block = None
-        if self.current_token.type == "ELSE":
-            self.next_token()
-            Helper.expect(self, "LBRACE")
-            else_block = []
-            while self.current_token.type != "RBRACE":
-                else_block.append(self.statement())
-            Helper.expect(self, "RBRACE")
+        if self.current_token:
+            if self.current_token.type == "ELSE":
+                self.next_token()
+                Helper.expect(self, "LBRACE")
+                else_block = []
+                while self.current_token.type != "RBRACE":
+                    else_block.append(self.statement())
+                Helper.expect(self, "RBRACE")
         return IfStmt(condition, then_block, else_block)
 
     def while_stmt(self):
