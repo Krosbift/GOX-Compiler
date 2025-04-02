@@ -1,0 +1,37 @@
+{
+    "__class__": "Program",
+    "statements": [
+        {
+            "__class__": "FuncDecl",
+            "is_import": false,
+            "identifier": "cuadrado",
+            "parameters": {
+                "__class__": "Parameters",
+                "params": [
+                    [
+                        "n",
+                        "int"
+                    ]
+                ]
+            },
+            "return_type": "int",
+            "body": [
+                {
+                    "__class__": "ReturnStmt",
+                    "expression": {
+                        "__class__": "BinaryOp",
+                        "left": {
+                            "__class__": "IdentifierLocation",
+                            "name": "n"
+                        },
+                        "op": "*",
+                        "right": {
+                            "__class__": "IdentifierLocation",
+                            "name": "n"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

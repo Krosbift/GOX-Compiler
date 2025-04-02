@@ -1,0 +1,16 @@
+{
+    "__class__": "Program",
+    "statements": [
+        {
+            "__class__": "VarDecl",
+            "kind": "VAR",
+            "identifier": "x",
+            "var_type": "int",
+            "initializer": {
+                "__class__": "Literal",
+                "value": "10",
+                "type_token": "INTEGER"
+            }
+        }
+    ]
+}
