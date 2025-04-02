@@ -58,28 +58,28 @@ class Parser:
         ###           / return_stmt
         ###           / print_stmt
         """
-        if self.current_token.type == "ID":
+        if self.current_token and self.current_token.type == "ID":
             if Helper.peek_token(self).type == "ASSIGN":
                 return self.assignment()
             elif Helper.peek_token(self).type == "LPAREN":
                 return self.func_call()
             else:
                 Helper.error(f"Unexpected token after ID: {Helper.peek_token(self)}")
-        elif self.current_token.type in ("VAR", "CONST"):
+        elif self.current_token and self.current_token.type in ("VAR", "CONST"):
             return self.vardecl()
-        elif self.current_token.type == "FUNC":
+        elif self.current_token and self.current_token.type == "FUNC":
             return self.funcdecl()
-        elif self.current_token.type == "IF":
+        elif self.current_token and self.current_token.type == "IF":
             return self.if_stmt()
-        elif self.current_token.type == "WHILE":
+        elif self.current_token and self.current_token.type == "WHILE":
             return self.while_stmt()
-        elif self.current_token.type == "BREAK":
+        elif self.current_token and self.current_token.type == "BREAK":
             return self.break_stmt()
-        elif self.current_token.type == "CONTINUE":
+        elif self.current_token and self.current_token.type == "CONTINUE":
             return self.continue_stmt()
-        elif self.current_token.type == "RETURN":
+        elif self.current_token and self.current_token.type == "RETURN":
             return self.return_stmt()
-        elif self.current_token.type == "PRINT":
+        elif self.current_token and self.current_token.type == "PRINT":
             return self.print_stmt()
         else:
             Helper.error(f"Unexpected token: {self.current_token}")
@@ -98,7 +98,7 @@ class Parser:
         """
         ### ('var' / 'const') ID type? ('=' expression)? ';'
         """
-        kind = self.current_token.type
+        kind = self.current_token.type 
         self.next_token()
         identifier = self.current_token.value
         Helper.expect(self, "ID")
@@ -230,10 +230,11 @@ class Parser:
         ### expression ('||') expression
         """
         node = self.andterm()
-        while self.current_token.type == "LOR":
-            op = self.current_token.value
-            self.next_token()
-            node = BinaryOp(node, op, self.andterm())
+        if self.current_token:
+            while self.current_token.type == "LOR":
+                op = self.current_token.value
+                self.next_token()
+                node = BinaryOp(node, op, self.andterm())
         return node
 
     def andterm(self):
@@ -241,10 +242,11 @@ class Parser:
         ### expression ('&&') expression
         """
         node = self.relterm()
-        while self.current_token.type == "LAND":
-            op = self.current_token.value
-            self.next_token()
-            node = BinaryOp(node, op, self.relterm())
+        if self.current_token:
+            while self.current_token.type == "LAND":
+                op = self.current_token.value
+                self.next_token()
+                node = BinaryOp(node, op, self.relterm())
         return node
 
     def relterm(self):
@@ -252,10 +254,11 @@ class Parser:
         ### expression ('<' / '>' / '<=' / '>=' / '==' / '!=') expression
         """
         node = self.addterm()
-        while self.current_token.type in ("LT", "GT", "LE", "GE", "EQ", "NE"):
-            op = self.current_token.value
-            self.next_token()
-            node = BinaryOp(node, op, self.addterm())
+        if self.current_token:
+            while self.current_token.type in ("LT", "GT", "LE", "GE", "EQ", "NE"):
+                op = self.current_token.value
+                self.next_token()
+                node = BinaryOp(node, op, self.addterm())
         return node
 
     def addterm(self):
@@ -263,10 +266,11 @@ class Parser:
         ### expression ('+' / '-') expression
         """
         node = self.factor()
-        while self.current_token.type in ("PLUS", "MINUS"):
-            op = self.current_token.value
-            self.next_token()
-            node = BinaryOp(node, op, self.factor())
+        if self.current_token:
+            while self.current_token.type in ("PLUS", "MINUS"):
+                op = self.current_token.value
+                self.next_token()
+                node = BinaryOp(node, op, self.factor())
         return node
 
     def factor(self):
@@ -274,10 +278,11 @@ class Parser:
         ### expression ('*' / '/') expression
         """
         node = self.primary()
-        while self.current_token.type in ("TIMES", "DIVIDE"):
-            op = self.current_token.value
-            self.next_token()
-            node = BinaryOp(node, op, self.primary())
+        if self.current_token:
+            while self.current_token.type in ("TIMES", "DIVIDE"):
+                op = self.current_token.value
+                self.next_token()
+                node = BinaryOp(node, op, self.primary())
         return node
 
     def primary(self):
@@ -336,11 +341,11 @@ class Parser:
         """
         ### ID | '`' expression
         """
-        if self.current_token.type == "ID":
+        if self.current_token and self.current_token.type == "ID":
             name = self.current_token.value
             self.next_token()
             return IdentifierLocation(name)
-        elif self.current_token.type == "DEREF":
+        elif self.current_token and self.current_token.type == "DEREF":
             self.next_token()
             expr = self.expression()
             return DereferenceLocation(expr)

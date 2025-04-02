@@ -1,7 +1,7 @@
 class Helper:
     @staticmethod
     def expect(parser, token_type):
-        if parser.current_token.type == token_type:
+        if parser.current_token and parser.current_token.type == token_type:
             value = parser.current_token.value
             parser.next_token()
             return value
@@ -21,7 +21,7 @@ class Helper:
 
     @staticmethod
     def expect_type(parser):
-        if parser.current_token.type in ("INT", "FLOAT_TYPE", "CHAR_TYPE", "BOOL"):
+        if parser.current_token and parser.current_token.type in ("INT", "FLOAT_TYPE", "CHAR_TYPE", "BOOL"):
             value = parser.current_token.value
             parser.next_token()
             return value
