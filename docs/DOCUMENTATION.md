@@ -4,7 +4,7 @@
 
 1. Santiago Torifa Manso
 2. Mariana Tellez Gutierrez
-3. Katherine Tatiana Ocampo
+3. Katherin Tatiana Ocampo
 
 ## Estructura del proyecto
 
