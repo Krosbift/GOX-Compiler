@@ -1,0 +1,2 @@
+class Senser:
+    pass

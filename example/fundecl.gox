@@ -1,3 +1,0 @@
-func cuadrado(n int) int {
-    return n * n;
-}

@@ -1,7 +1,7 @@
-from ..errors.lexer import LexerError
-from ...shared.reader.file_reader import FileReader
-from ...shared.grammar.gox_grammar import Grammar
-from ...shared.grammar.gox_token import Token
+from .errors.lexer import LexerError
+from ..shared.reader.file_reader import FileReader
+from ..shared.grammar.gox_grammar import Grammar
+from ..shared.grammar.gox_token import Token
 
 
 class Lexer:
