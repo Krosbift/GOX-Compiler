@@ -1,4 +1,3 @@
-from .helper import Helper
 from .AST.grammar.program import Program
 from .AST.grammar.assigment import Assignment
 from .AST.grammar.vardecl import VarDecl
@@ -17,6 +16,9 @@ from .AST.grammar.identifier_location import IdentifierLocation
 from .AST.grammar.dereference_location import DereferenceLocation
 from .AST.grammar.function_call import FunctionCall
 from .AST.grammar.cast import Cast
+from ..helpers.parser import ParserHelper
+from ..errors.parser import ParserError
+from ...shared.grammar.gox_token import Token
 
 
 class Parser:
@@ -26,15 +28,13 @@ class Parser:
         self.next_token()
 
     def next_token(self):
-        """
-        Recupera el siguiente token de la lista de tokens y actualiza el token actual.
-        """
         if self.tokens:
             self.current_token = self.tokens.pop(0)
         else:
             self.current_token = None
 
     def parse(self):
+        self.errors = []
         return self.program()
 
     def program(self):
@@ -44,6 +44,10 @@ class Parser:
         statements = []
         while self.current_token and self.current_token.type != "EOF":
             statements.append(self.statement())
+
+        if len(self.errors) > 0:
+            return ParserError(self.errors).print_errors()
+
         return Program(statements)
 
     def statement(self):
@@ -59,12 +63,22 @@ class Parser:
         ###           / print_stmt
         """
         if self.current_token and self.current_token.type == "ID":
-            if Helper.peek_token(self).type == "ASSIGN":
+            if ParserHelper.peek_token(self).type == "ASSIGN":
                 return self.assignment()
-            elif Helper.peek_token(self).type == "LPAREN":
+            elif ParserHelper.peek_token(self).type == "LPAREN":
                 return self.func_call()
             else:
-                Helper.error(f"Unexpected token after ID: {Helper.peek_token(self)}")
+                token_type, value, line_number, column_number = self.next_token()
+                self.errors.append(
+                    (
+                        Token(token_type, value, line_number, column_number),
+                        (
+                            "Se esperaba el token ASSIGN / LPAREN en la linea "
+                            "{line_number}, columna {column_number}. Pero se encontró "
+                            "el token {token_type}"
+                        ),
+                    )
+                )
         elif self.current_token and self.current_token.type in ("VAR", "CONST"):
             return self.vardecl()
         elif self.current_token and self.current_token.type == "FUNC":
@@ -82,26 +96,36 @@ class Parser:
         elif self.current_token and self.current_token.type == "PRINT":
             return self.print_stmt()
         else:
-            Helper.error(f"Unexpected token: {self.current_token}")
+            token_type, value, line_number, column_number = self.next_token()
+            self.errors.append(
+                (
+                    Token(token_type, value, line_number, column_number),
+                    (
+                        "Se esperaba el token VAR / CONST / FUNC / IF / WHILE / BREAK / "
+                        "CONTINUE / RETURN / PRINT en la linea {line_number}, columna "
+                        "{column_number}. Pero se encontró el token {token_type}"
+                    ),
+                )
+            )
 
     def assignment(self):
         """
         ### location '=' expression ';'
         """
         location = self.location()
-        Helper.expect(self, "ASSIGN")
+        ParserHelper.expect(self, "ASSIGN")
         expression = self.expression()
-        Helper.expect(self, "SEMI")
+        ParserHelper.expect(self, "SEMI")
         return Assignment(location, expression)
 
     def vardecl(self):
         """
         ### ('var' / 'const') ID type? ('=' expression)? ';'
         """
-        kind = self.current_token.type 
+        kind = self.current_token.type if self.current_token else None  # TODO
         self.next_token()
-        identifier = self.current_token.value
-        Helper.expect(self, "ID")
+        identifier = self.current_token.value if self.current_token else None
+        ParserHelper.expect(self, "ID")
         var_type = None
         if self.current_token.type in ("INT", "FLOAT_TYPE", "CHAR_TYPE", "BOOL"):
             var_type = self.current_token.value
@@ -110,7 +134,7 @@ class Parser:
         if self.current_token.type == "ASSIGN":
             self.next_token()
             initializer = self.expression()
-        Helper.expect(self, "SEMI")
+        ParserHelper.expect(self, "SEMI")
         return VarDecl(kind, identifier, var_type, initializer)
 
     def funcdecl(self):
@@ -121,87 +145,87 @@ class Parser:
         if self.current_token.type == "IMPORT":
             is_import = True
             self.next_token()
-        Helper.expect(self, "FUNC")
+        ParserHelper.expect(self, "FUNC")
         identifier = self.current_token.value
-        Helper.expect(self, "ID")
-        Helper.expect(self, "LPAREN")
+        ParserHelper.expect(self, "ID")
+        ParserHelper.expect(self, "LPAREN")
         parameters = self.parameters()
-        Helper.expect(self, "RPAREN")
-        return_type = Helper.expect_type(self)
-        Helper.expect(self, "LBRACE")
+        ParserHelper.expect(self, "RPAREN")
+        return_type = ParserHelper.expect_type(self)
+        ParserHelper.expect(self, "LBRACE")
         body = []
         while self.current_token.type != "RBRACE":
             body.append(self.statement())
-        Helper.expect(self, "RBRACE")
+        ParserHelper.expect(self, "RBRACE")
         return FuncDecl(is_import, identifier, parameters, return_type, body)
 
     def if_stmt(self):
         """
         ### 'if' expression '{' statement* '}' ('else' '{' statement* '}')?
         """
-        Helper.expect(self, "IF")
+        ParserHelper.expect(self, "IF")
         condition = self.expression()
-        Helper.expect(self, "LBRACE")
+        ParserHelper.expect(self, "LBRACE")
         then_block = []
         while self.current_token.type != "RBRACE":
             then_block.append(self.statement())
-        Helper.expect(self, "RBRACE")
+        ParserHelper.expect(self, "RBRACE")
         else_block = None
         if self.current_token:
             if self.current_token.type == "ELSE":
                 self.next_token()
-                Helper.expect(self, "LBRACE")
+                ParserHelper.expect(self, "LBRACE")
                 else_block = []
                 while self.current_token.type != "RBRACE":
                     else_block.append(self.statement())
-                Helper.expect(self, "RBRACE")
+                ParserHelper.expect(self, "RBRACE")
         return IfStmt(condition, then_block, else_block)
 
     def while_stmt(self):
         """
         ### 'while' expression '{' statement* '}'
         """
-        Helper.expect(self, "WHILE")
+        ParserHelper.expect(self, "WHILE")
         condition = self.expression()
-        Helper.expect(self, "LBRACE")
+        ParserHelper.expect(self, "LBRACE")
         body = []
         while self.current_token.type != "RBRACE":
             body.append(self.statement())
-        Helper.expect(self, "RBRACE")
+        ParserHelper.expect(self, "RBRACE")
         return WhileStmt(condition, body)
 
     def break_stmt(self):
         """
         ### 'break' ';'
         """
-        Helper.expect(self, "BREAK")
-        Helper.expect(self, "SEMI")
+        ParserHelper.expect(self, "BREAK")
+        ParserHelper.expect(self, "SEMI")
         return BreakStmt()
 
     def continue_stmt(self):
         """
         ### 'continue' ';'
         """
-        Helper.expect(self, "CONTINUE")
-        Helper.expect(self, "SEMI")
+        ParserHelper.expect(self, "CONTINUE")
+        ParserHelper.expect(self, "SEMI")
         return ContinueStmt()
 
     def return_stmt(self):
         """
         ### 'return' expression ';'
         """
-        Helper.expect(self, "RETURN")
+        ParserHelper.expect(self, "RETURN")
         expression = self.expression()
-        Helper.expect(self, "SEMI")
+        ParserHelper.expect(self, "SEMI")
         return ReturnStmt(expression)
 
     def print_stmt(self):
         """
         ### 'print' expression ';'
         """
-        Helper.expect(self, "PRINT")
+        ParserHelper.expect(self, "PRINT")
         expression = self.expression()
-        Helper.expect(self, "SEMI")
+        ParserHelper.expect(self, "SEMI")
         return PrintStmt(expression)
 
     def parameters(self):
@@ -211,14 +235,14 @@ class Parser:
         params = []
         if self.current_token.type != "RPAREN":
             param_name = self.current_token.value
-            Helper.expect(self, "ID")
-            param_type = Helper.expect_type(self)
+            ParserHelper.expect(self, "ID")
+            param_type = ParserHelper.expect_type(self)
             params.append((param_name, param_type))
             while self.current_token.type == "COMMA":
                 self.next_token()
                 param_name = self.current_token.value
-                Helper.expect(self, "ID")
-                param_type = Helper.expect_type(self)
+                ParserHelper.expect(self, "ID")
+                param_type = ParserHelper.expect_type(self)
                 params.append((param_name, param_type))
         return Parameters(params)
 
@@ -230,11 +254,10 @@ class Parser:
         ### expression ('||') expression
         """
         node = self.andterm()
-        if self.current_token:
-            while self.current_token.type == "LOR":
-                op = self.current_token.value
-                self.next_token()
-                node = BinaryOp(node, op, self.andterm())
+        while self.current_token and self.current_token.type == "LOR":
+            op = self.current_token.value
+            self.next_token()
+            node = BinaryOp(node, op, self.andterm())
         return node
 
     def andterm(self):
@@ -242,11 +265,10 @@ class Parser:
         ### expression ('&&') expression
         """
         node = self.relterm()
-        if self.current_token:
-            while self.current_token.type == "LAND":
-                op = self.current_token.value
-                self.next_token()
-                node = BinaryOp(node, op, self.relterm())
+        while self.current_token and self.current_token.type == "LAND":
+            op = self.current_token.value
+            self.next_token()
+            node = BinaryOp(node, op, self.relterm())
         return node
 
     def relterm(self):
@@ -254,11 +276,17 @@ class Parser:
         ### expression ('<' / '>' / '<=' / '>=' / '==' / '!=') expression
         """
         node = self.addterm()
-        if self.current_token:
-            while self.current_token.type in ("LT", "GT", "LE", "GE", "EQ", "NE"):
-                op = self.current_token.value
-                self.next_token()
-                node = BinaryOp(node, op, self.addterm())
+        while self.current_token and self.current_token.type in (
+            "LT",
+            "GT",
+            "LE",
+            "GE",
+            "EQ",
+            "NE",
+        ):
+            op = self.current_token.value
+            self.next_token()
+            node = BinaryOp(node, op, self.addterm())
         return node
 
     def addterm(self):
@@ -266,11 +294,10 @@ class Parser:
         ### expression ('+' / '-') expression
         """
         node = self.factor()
-        if self.current_token:
-            while self.current_token.type in ("PLUS", "MINUS"):
-                op = self.current_token.value
-                self.next_token()
-                node = BinaryOp(node, op, self.factor())
+        while self.current_token and self.current_token.type in ("PLUS", "MINUS"):
+            op = self.current_token.value
+            self.next_token()
+            node = BinaryOp(node, op, self.factor())
         return node
 
     def factor(self):
@@ -278,11 +305,10 @@ class Parser:
         ### expression ('*' / '/') expression
         """
         node = self.primary()
-        if self.current_token:
-            while self.current_token.type in ("TIMES", "DIVIDE"):
-                op = self.current_token.value
-                self.next_token()
-                node = BinaryOp(node, op, self.primary())
+        while self.current_token and self.current_token.type in ("TIMES", "DIVIDE"):
+            op = self.current_token.value
+            self.next_token()
+            node = BinaryOp(node, op, self.primary())
         return node
 
     def primary(self):
@@ -292,7 +318,7 @@ class Parser:
         ### type '(' expression ')' |
         ### 'int' / 'float' / 'char' / 'bool' |
         """
-        token = self.current_token
+        token = self.current_token if self.current_token else Token()
         if token.type in ("INTEGER", "FLOAT", "CHAR", "TRUE", "FALSE"):
             self.next_token()
             return Literal(token.value, token.type)
@@ -302,14 +328,14 @@ class Parser:
         elif token.type == "LPAREN":
             self.next_token()
             expr = self.expression()
-            Helper.expect(self, "RPAREN")
+            ParserHelper.expect(self, "RPAREN")
             return expr
         elif token.type in ("INT", "FLOAT_TYPE", "CHAR_TYPE", "BOOL"):
             cast_type = token.value
             self.next_token()
-            Helper.expect(self, "LPAREN")
+            ParserHelper.expect(self, "LPAREN")
             expr = self.expression()
-            Helper.expect(self, "RPAREN")
+            ParserHelper.expect(self, "RPAREN")
             return Cast(cast_type, expr)
         elif token.type == "ID":
             name = token.value
@@ -317,7 +343,7 @@ class Parser:
             if self.current_token.type == "LPAREN":
                 self.next_token()
                 args = self.arguments()
-                Helper.expect(self, "RPAREN")
+                ParserHelper.expect(self, "RPAREN")
                 return FunctionCall(name, args)
             else:
                 return IdentifierLocation(name)
@@ -326,7 +352,18 @@ class Parser:
             expr = self.expression()
             return DereferenceLocation(expr)
         else:
-            Helper.error(f"Unexpected token in primary: {token}")
+            token_type, value, line_number, column_number = self.next_token()
+            self.errors.append(
+                (
+                    Token(token_type, value, line_number, column_number),
+                    (
+                        "Se esperaba el token INTEGER / FLOAT / CHAR / TRUE / FALSE / "
+                        "PLUS / MINUS / GROW / LPAREN / INT / FLOAT_TYPE / CHAR_TYPE / "
+                        "BOOL / ID en la linea {line_number}, columna {column_number}. "
+                        "Pero se encontró el token {token_type}"
+                    ),
+                )
+            )
 
     def arguments(self):
         args = []
@@ -350,7 +387,16 @@ class Parser:
             expr = self.expression()
             return DereferenceLocation(expr)
         else:
-            Helper.error(f"Unexpected token in location: {self.current_token}")
+            token_type, value, line_number, column_number = self.next_token()
+            self.errors.append(
+                (
+                    Token(token_type, value, line_number, column_number),
+                    (
+                        "Se esperaba el token ID / DEREF en la linea {line_number}, "
+                        "columna {column_number}. Pero se encontró el token {token_type}"
+                    ),
+                )
+            )
 
     def func_call(self):
         """
@@ -358,8 +404,8 @@ class Parser:
         """
         name = self.current_token.value
         self.next_token()
-        Helper.expect(self, "LPAREN")
+        ParserHelper.expect(self, "LPAREN")
         args = self.arguments()
-        Helper.expect(self, "RPAREN")
-        Helper.expect(self, "SEMI")
+        ParserHelper.expect(self, "RPAREN")
+        ParserHelper.expect(self, "SEMI")
         return FunctionCall(name, args)

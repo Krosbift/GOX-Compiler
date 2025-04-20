@@ -1,9 +1,9 @@
 from dataclasses import dataclass
-from ..nodes.statement_node import Statement
+from ..nodes.expression_node import Expression
 
 
 @dataclass
-class Cast(Statement):
+class Cast(Expression):
     """
     ### type '(' expression ')'
     """

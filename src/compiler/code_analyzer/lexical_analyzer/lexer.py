@@ -1,5 +1,4 @@
-from .view_tokens.lexer_error import LexerError
-from .view_tokens.lexer_success import LexerSuccess
+from ..errors.lexer import LexerError
 from ...shared.reader.file_reader import FileReader
 from ...shared.grammar.gox_grammar import Grammar
 from ...shared.grammar.gox_token import Token
@@ -33,7 +32,6 @@ class Lexer:
         if self.errors:
             return LexerError(self.errors).print_errors()
 
-        LexerSuccess(self.tokens).print_tokens()
         return self.tokens
 
     def _extract_match_info(self, match):
