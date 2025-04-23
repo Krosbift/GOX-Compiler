@@ -40,7 +40,10 @@ class ParserHelper:
 
     @staticmethod
     def error(parser, message):
-        token_type, value, line_number, column_number = parser.next_token()
+        token_type, value, line_number, column_number = (
+            parser.current_token if parser.current_token else (None, None, None, None)
+        )
         parser.errors.append(
             (Token(token_type, value, line_number, column_number), message)
         )
+        parser.next_token()

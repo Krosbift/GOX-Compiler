@@ -11,3 +11,6 @@ class Literal(Expression):
     def __init__(self, value, type_token):
         self.value = value
         self.type_token = type_token
+
+    def __repr__(self):
+        return f"Literal(value={self.value!r}, type_token={self.type_token!r})"

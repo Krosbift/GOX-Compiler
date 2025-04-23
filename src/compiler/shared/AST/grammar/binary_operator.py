@@ -12,3 +12,6 @@ class BinaryOp(Expression):
         self.left = left
         self.op = op
         self.right = right
+
+    def __repr__(self):
+        return f"BinaryOp(left={repr(self.left)}, op={repr(self.op)}, right={repr(self.right)})"

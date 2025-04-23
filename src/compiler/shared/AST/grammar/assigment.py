@@ -11,3 +11,6 @@ class Assignment(Statement):
     def __init__(self, location, expression):
         self.location = location
         self.expression = expression
+
+    def __repr__(self):
+        return f"Assignment(location={self.location!r}, expression={self.expression!r})"

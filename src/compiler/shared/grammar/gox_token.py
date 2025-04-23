@@ -7,3 +7,6 @@ class Token:
 
     def __str__(self):
         return f"Token({self.type}, {repr(self.value)}, {self.line}, {self.column})"
+
+    def __iter__(self):
+        return iter((self.type, self.value, self.line, self.column))

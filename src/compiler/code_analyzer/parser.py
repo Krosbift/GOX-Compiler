@@ -68,7 +68,11 @@ class Parser:
             elif ParserHelper.peek_token(self).type == "LPAREN":
                 return self.func_call()
             else:
-                token_type, value, line_number, column_number = self.next_token()
+                token_type, value, line_number, column_number = (
+                    self.current_token
+                    if self.current_token
+                    else (None, None, None, None)
+                )
                 self.errors.append(
                     (
                         Token(token_type, value, line_number, column_number),
@@ -79,6 +83,7 @@ class Parser:
                         ),
                     )
                 )
+                self.next_token()
         elif self.current_token and self.current_token.type in ("VAR", "CONST"):
             return self.vardecl()
         elif self.current_token and self.current_token.type == "FUNC":
@@ -96,7 +101,9 @@ class Parser:
         elif self.current_token and self.current_token.type == "PRINT":
             return self.print_stmt()
         else:
-            token_type, value, line_number, column_number = self.next_token()
+            token_type, value, line_number, column_number = (
+                self.current_token if self.current_token else (None, None, None, None)
+            )
             self.errors.append(
                 (
                     Token(token_type, value, line_number, column_number),
@@ -107,6 +114,7 @@ class Parser:
                     ),
                 )
             )
+            self.next_token()
 
     def assignment(self):
         """
@@ -154,7 +162,7 @@ class Parser:
         return_type = ParserHelper.expect_type(self)
         ParserHelper.expect(self, "LBRACE")
         body = []
-        while self.current_token.type != "RBRACE":
+        while self.current_token and self.current_token.type != "RBRACE":
             body.append(self.statement())
         ParserHelper.expect(self, "RBRACE")
         return FuncDecl(is_import, identifier, parameters, return_type, body)
@@ -352,7 +360,9 @@ class Parser:
             expr = self.expression()
             return DereferenceLocation(expr)
         else:
-            token_type, value, line_number, column_number = self.next_token()
+            token_type, value, line_number, column_number = (
+                self.current_token if self.current_token else (None, None, None, None)
+            )
             self.errors.append(
                 (
                     Token(token_type, value, line_number, column_number),
@@ -364,6 +374,7 @@ class Parser:
                     ),
                 )
             )
+            self.next_token()
 
     def arguments(self):
         args = []
@@ -387,7 +398,9 @@ class Parser:
             expr = self.expression()
             return DereferenceLocation(expr)
         else:
-            token_type, value, line_number, column_number = self.next_token()
+            token_type, value, line_number, column_number = (
+                self.current_token if self.current_token else (None, None, None, None)
+            )
             self.errors.append(
                 (
                     Token(token_type, value, line_number, column_number),
@@ -397,6 +410,7 @@ class Parser:
                     ),
                 )
             )
+            self.next_token()
 
     def func_call(self):
         """

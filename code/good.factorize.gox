@@ -51,3 +51,4 @@ func factorize(n int) int {
 
 var num int = 21;
 factorize(num);
+`num = 2584;

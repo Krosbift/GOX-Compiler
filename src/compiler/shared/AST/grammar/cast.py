@@ -11,3 +11,6 @@ class Cast(Expression):
     def __init__(self, cast_type, expression):
         self.cast_type = cast_type
         self.expression = expression
+
+    def __repr__(self):
+        return f"Cast(cast_type={self.cast_type}, expression={self.expression})"

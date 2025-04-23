@@ -11,3 +11,6 @@ class FunctionCall(Statement):
     def __init__(self, name, arguments):
         self.name = name
         self.arguments = arguments
+
+    def __repr__(self):
+        return f"FunctionCall(name={self.name!r}, arguments={self.arguments!r})"

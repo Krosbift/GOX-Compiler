@@ -13,3 +13,9 @@ class VarDecl(Statement):
         self.identifier = identifier
         self.var_type = var_type
         self.initializer = initializer
+
+    def __repr__(self):
+        return (
+            f"VarDecl(kind={self.kind!r}, identifier={self.identifier!r}, "
+            f"var_type={self.var_type!r}, initializer={self.initializer!r})"
+        )

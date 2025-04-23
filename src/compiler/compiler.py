@@ -1,5 +1,6 @@
 from .code_analyzer.lexer import Lexer
 from .code_analyzer.parser import Parser
+from .code_analyzer.senser import Senser
 
 
 class Compiler:
@@ -35,4 +36,5 @@ class Compiler:
         self.ast = parser.parse()
 
     def set_senser(self):
-        self.sym_table = None
+        senser = Senser()
+        self.sym_table = senser.analyze(self.ast)

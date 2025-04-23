@@ -1,14 +1,10 @@
-# semantic/types.py
-
-# Tipos básicos (puedes usar constantes o una clase Enum)
 TYPE_INT = "int"
 TYPE_FLOAT = "float"
 TYPE_BOOL = "bool"
 TYPE_CHAR = "char"
-TYPE_VOID = "void"  # Para funciones que no retornan nada (si aplica)
-TYPE_ERROR = "error"  # Para indicar un error de tipo
+TYPE_VOID = "void"
+TYPE_ERROR = "error"
 
-# Mapeo de nombres de token/AST a tipos internos
 TYPE_MAP = {
     "INT": TYPE_INT,
     "INTEGER": TYPE_INT,
@@ -23,10 +19,7 @@ TYPE_MAP = {
 
 
 def get_type_from_name(name: str) -> str:
-    """Convierte un nombre de tipo (string) a nuestro tipo interno."""
-    return TYPE_MAP.get(
-        name.upper(), name
-    )  # Devuelve el tipo mapeado o el mismo nombre si no está
+    return TYPE_MAP.get(name.upper(), name)
 
 
 def is_numeric(type_name: str) -> bool:
