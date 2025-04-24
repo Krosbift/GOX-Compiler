@@ -12,6 +12,7 @@ class Grammar:
         ("NE", r"!="),
         ("LAND", r"&&"),
         ("LOR", r"\|\|"),
+        ("NOT", r"!"),
         ("LT", r"<"),
         ("GT", r">"),
         ("PLUS", r"\+"),
