@@ -1,0 +1,104 @@
+// easter.gox
+/*
+1. ¿Qué es el algoritmo de Gauss?
+   Carl Friedrich Gauss ideó un método matemático 
+   para calcular la fecha de Pascua en cualquier año
+   del calendario gregoriano. El método transforma 
+   el problema astronómico en una serie de 
+   operaciones aritméticas usando módulos, divisiones
+   y sumas.
+2. Principios básicos
+   - Ciclo metónico: La Luna tiene un ciclo de 19 años.
+   - Correcciones solares: Ajustes por los errores acumulados del calendario.
+   - Correcciones lunares: Ajustes debido al desfase lunar.
+3. Algoritmo paso a paso
+   Dado un año Y:
+   a = Y mod 19
+   b = Y mod 4
+   c = Y mod 7
+   k = Y / 100
+   p = (13 + 8k) / 25
+   q = k / 4
+   M = (15 - p + k - q) mod 30
+   N = (4 + k - q) mod 7
+   d = (19a + M) mod 30
+   e = (2b + 4c + 6d + N) mod 7
+   Fecha tentativa = 22 + d + e
+   Si > 31: caerá en abril como (Fecha - 31).
+4. Correcciones especiales
+   - Si d = 29 y e = 6, o
+   El Algoritmo de Gauss para la Fecha de Pascua
+   - Si d = 28, e = 6 y a > 10,
+   Entonces la fecha de Pascua debe adelantarse un día.
+5. Aplicación práctica
+   Ejemplo para el año 2025:
+   Número áureo: 11
+   Correcciones: M=24, N=5
+   Edad de la luna: d=23
+   Ajuste semanal: e=6
+   Fecha tentativa: 51 -> 20 de abril de 2025.
+6. Fuentes principales
+   - Carl Friedrich Gauss, Werke, Volumen 9.
+   - Alden A. Mosshammer, The Easter Computus.
+   - Jean Meeus, Astronomical Algorithms.
+*/
+
+func mod(x int, y int) int {
+	return x - (x / y) * y;
+}
+
+// Algoritmo de Gauss 
+
+func easter(year int) int {
+    var a int = mod(year, 19);
+    var b int = year / 100;
+    var c int = mod(year, 100);
+    var d int = b / 4;
+    var e int = mod(b , 4);
+    var f int = (b + 8) / 25;
+    var g int = (b - f + 1) / 3;
+    var h int = mod(19 * a + b - d - g + 15, 30);
+    var i int = c / 4;
+    var k int = mod(c, 4);
+    var l int = mod(32 + 2 * e + 2 * i - h - k, 7);
+    var m int = (a + 11 * h + 22 * l) / 451;
+    var month int = (h + l - 7 * m + 114) / 31;
+    var day int = mod(h + l - 7 * m + 114, 31) + 1;
+    return 100 * month + day;
+}
+
+func main() int {
+
+var year int = 2025;				 // Cambia aquí el año
+var resul int = easter(year);
+
+var month int = resul / 100;
+var day int = mod(resul, 100);
+
+// Imprimir "La Pascua en el año "
+print 'L'; print 'a'; print ' ';
+print 'P'; print 'a'; print 's'; print 'c'; print 'u'; print 'a'; print ' ';
+print 'e'; print 'n'; print ' ';
+print 'e'; print 'l'; print ' ';
+print 'a'; print 'n'; print 'o'; print ' ';
+
+print year;
+
+print ' ';
+print 'c'; print 'a'; print 'e'; print ' ';
+print 'e'; print 'l'; print ' ';
+
+print day;
+print ' ';
+print 'd'; print 'e'; print ' ';
+
+// Decidir si marzo o abril
+if month == 3 {
+	print 'm'; print 'a'; print 'r'; print 'z'; print 'o';
+} else {
+  print 'a'; print 'b'; print 'r'; print 'i'; print 'l';
+}
+
+print '.';
+//print '\n';
+}

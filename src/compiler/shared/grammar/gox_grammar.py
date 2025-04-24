@@ -50,6 +50,7 @@ class Grammar:
         ("ID", r"[a-zA-Z_][a-zA-Z0-9_]*"),
         ("UNCLOSED_COMMENT", r"/\*.*"),
         ("UNCLOSED_CHAR", r"'(?:\\.|[^'\\])*"),
+        ("MEMORY_ADDRESS", r"'\\x[0-9a-fA-F]{2}'"),
         ("ERROR", r"."),
     ]
 

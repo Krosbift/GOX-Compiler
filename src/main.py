@@ -7,7 +7,7 @@ class Main:
     def init():
         args = Main.parse_arguments()
         if not args.path_file:
-            raise SyntaxError("No file path was provided for compilation")
+            raise NameError("No file path was provided for compilation")
         Compiler(args.path_file)
 
     @staticmethod

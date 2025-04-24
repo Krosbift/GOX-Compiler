@@ -9,7 +9,7 @@ class LexerError:
     def print_errors(self):
         table = self._create_error_table()
         print(table)
-        return []
+        return None
 
     def _create_error_table(self):
         table = PrettyTable()
