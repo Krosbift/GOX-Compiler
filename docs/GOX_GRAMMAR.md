@@ -3,14 +3,14 @@ program <- statement* EOF
 
 # Instrucciones del lenguaje
 statement <- assignment
-           / vardecl
-           / funcdecl
-           / if_stmt
-           / while_stmt
-           / break_stmt
-           / continue_stmt
-           / return_stmt
-           / print_stmt
+        / vardecl
+        / funcdecl
+        / if_stmt
+        / while_stmt
+        / break_stmt
+        / continue_stmt
+        / return_stmt
+        / print_stmt
 
 # Asignación de valores
 assignment <- location '=' expression ';'
@@ -23,7 +23,7 @@ funcdecl <- 'import'? 'func' ID '(' parameters ')' type '{' statement* '}'
 
 # Sentencia condicional
 if_stmt <- 'if' expression '{' statement* '}'
-         / 'if' expression '{' statement* '}' 'else' '{' statement* '}'
+        / 'if' expression '{' statement* '}' 'else' '{' statement* '}'
 
 # Sentencia de bucle
 while_stmt <- 'while' expression '{' statement* '}'
@@ -38,14 +38,14 @@ print_stmt <- 'print' expression ';'
 
 # Parámetros de funciones
 parameters <- ID type (',' ID type)*
-            / empty
+        / empty
 
 # Tipos de datos
 type <- 'int' / 'float' / 'char' / 'bool'
 
 # Ubicación de valores (variables o direcciones)
 location <- ID
-          / '`' expression
+        / '`' expression
 
 # Expresiones lógicas y aritméticas
 expression <- orterm ('||' orterm)*
@@ -54,7 +54,7 @@ andterm <- relterm (('<' / '>' / '<=' / '>=' / '==' / '!=') relterm)*
 relterm <- addterm (('+' / '-') addterm)*
 addterm <- factor (('*' / '/') factor)*
 factor <- literal  
-        / ('+' / '-' / '^') expression
+        / ('+' / '-' / '^' / '!') expression
         / '(' expression ')'
         / type '(' expression ')'
         / ID '(' arguments ')'
@@ -62,7 +62,7 @@ factor <- literal
 
 # Argumentos de funciones
 arguments <- expression (',' expression)*
-          / empty
+        / empty
 
 # Valores literales
 literal <- INTEGER / FLOAT / CHAR / bool

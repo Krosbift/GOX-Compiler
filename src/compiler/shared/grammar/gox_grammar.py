@@ -45,13 +45,13 @@ class Grammar:
         ("CHAR_TYPE", r"\bchar\b"),
         ("FLOAT_TYPE", r"\bfloat\b"),
         ("CONTINUE", r"\bcontinue\b"),
+        ("MEMORY_ADDRESS", r"'\\x[0-9a-fA-F]{2}'"),
         ("CHAR", r"'(\\[nrt'\"\\]|x[0-9a-fA-F]{2}|[^'\\])'"),
         ("FLOAT", r"\d+\.\d+"),
         ("INTEGER", r"\d+"),
         ("ID", r"[a-zA-Z_][a-zA-Z0-9_]*"),
         ("UNCLOSED_COMMENT", r"/\*.*"),
         ("UNCLOSED_CHAR", r"'(?:\\.|[^'\\])*"),
-        ("MEMORY_ADDRESS", r"'\\x[0-9a-fA-F]{2}'"),
         ("ERROR", r"."),
     ]
 
