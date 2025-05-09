@@ -321,7 +321,7 @@ class Parser:
 
     def primary(self):
         """
-        ### ('+' / '-' / '^') expression |
+        ### ('+' / '-' / '^' / '!') expression |
         ### INTEGER / FLOAT / CHAR / bool |
         ### type '(' expression ')' |
         ### 'int' / 'float' / 'char' / 'bool' |
@@ -333,6 +333,9 @@ class Parser:
         elif token.type in ("PLUS", "MINUS", "GROW"):
             self.next_token()
             return UnaryOp(token.value, self.expression())
+        elif token.type == "NOT":
+            self.next_token()
+            return UnaryOp("NOT", self.expression())
         elif token.type == "LPAREN":
             self.next_token()
             expr = self.expression()
@@ -368,7 +371,7 @@ class Parser:
                     Token(token_type, value, line_number, column_number),
                     (
                         "Se esperaba el token INTEGER / FLOAT / CHAR / TRUE / FALSE / "
-                        "PLUS / MINUS / GROW / LPAREN / INT / FLOAT_TYPE / CHAR_TYPE / "
+                        "PLUS / MINUS / GROW / NOT / LPAREN / INT / FLOAT_TYPE / CHAR_TYPE / "
                         "BOOL / ID en la linea {line_number}, columna {column_number}. "
                         "Pero se encontró el token {token_type}"
                     ),

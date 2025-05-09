@@ -1,5 +1,6 @@
 from .code_analyzer.lexer import Lexer
 from .code_analyzer.parser import Parser
+from ..shared.json.ast_to_json import ASTtoJSON
 
 
 class Compiler:
@@ -12,27 +13,12 @@ class Compiler:
             return 0
 
     def code_verify(self):
-        if self.set_lexer():
-            return 0
-
-        # self.set_parser()
-        # if self.ast == None:
-        #     return 0
-
-        # self.set_senser()
-        # if self.sym_table == None:
-        #     return 0
-
-        return 1
+        return self.set_lexer() or self.set_parser()
 
     def set_lexer(self):
         self.tokens = Lexer(self.path_file).analyze()
-        return True if self.tokens else False
+        return False if self.tokens else True
 
-    # def set_parser(self):
-    #     parser = Parser(self.tokens)
-    #     self.ast = parser.parse()
-
-    # def set_senser(self):
-    #     senser = Senser()
-    #     self.sym_table = senser.analyze(self.ast)
+    def set_parser(self):
+        self.ast = Parser(self.tokens).parse()
+        return False if self.ast else True
