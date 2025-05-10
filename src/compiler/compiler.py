@@ -1,6 +1,5 @@
 from .code_analyzer.lexer import Lexer
 from .code_analyzer.parser import Parser
-from ..shared.json.ast_to_json import ASTtoJSON
 
 
 class Compiler:
