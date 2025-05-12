@@ -132,7 +132,7 @@ class Parser:
         """
         ### ('var' / 'const') ID type? ('=' expression)? ';'
         """
-        kind = self.current_token.type if self.current_token else None  # TODO
+        kind = self.current_token.type if self.current_token else None
         self.next_token()
         identifier = self.current_token.value if self.current_token else None
         ParserHelper.expect(self, "ID")

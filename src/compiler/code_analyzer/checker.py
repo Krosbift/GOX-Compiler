@@ -102,8 +102,7 @@ class Checker:
         # `VarDecl(kind, identifier_token, var_type_str, initializer_expr)`
         var_name = (
             node.identifier
-        )  # Si `identifier` es un string, necesitas el token para la ubicación.
-        # Mejor si `node.id_token` es el Token.
+        )
         id_token_for_loc = (
             node.identifier_token if hasattr(node, "identifier_token") else node
         )
@@ -220,13 +219,6 @@ class Checker:
             # `location <- '`' expression`
             addr_expr_node = node.location.expression
             address_expr_type = self._visit(addr_expr_node)
-            if (
-                address_expr_type and address_expr_type != "int"
-            ):  # Permitir None si hubo error en addr_expr
-                self._add_error(
-                    f"La expresión para desreferenciar (puntero) debe ser de tipo 'int', pero se encontró '{address_expr_type}'.",
-                    addr_expr_node,
-                )
             pass
         else:
             self._add_error(
@@ -319,13 +311,6 @@ class Checker:
     def _visit_DereferenceLocation(self, node: DereferenceLocation):
         addr_expr_node = node.expression
         address_expr_type = self._visit(addr_expr_node)
-
-        if address_expr_type and address_expr_type != "int":
-            self._add_error(
-                f"La expresión para desreferenciar (puntero) debe ser de tipo 'int', pero se encontró '{address_expr_type}'.",
-                addr_expr_node,
-            )
-            return None
 
         return "int"
 
