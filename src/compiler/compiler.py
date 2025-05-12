@@ -21,9 +21,9 @@ class Compiler:
         return False if self.tokens else True
 
     def set_parser(self):
-        self.ast = Parser(self.tokens).parse()
+        self.ast = Parser(self.tokens).analyze()
         return False if self.ast else True
 
     def set_checker(self):
-        self.symtable = Checker(self.ast).check()
+        self.symtable = Checker(self.ast).analyze()
         return False if self.symtable else True

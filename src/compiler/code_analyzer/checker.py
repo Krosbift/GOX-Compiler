@@ -1,4 +1,5 @@
 from typing import Type
+from .errors.checker import CheckerError
 from ..shared.AST.grammar.program import Program
 from ..shared.AST.grammar.assigment import Assignment
 from ..shared.AST.grammar.vardecl import VarDecl
@@ -21,11 +22,6 @@ from ..shared.grammar.gox_token import Token
 from ..shared.symtable.symbol import Symbol, SymbolKind
 from ..shared.symtable.symtable import SymbolTable
 from ..shared.grammar.gox_token import Token
-
-
-class SemanticError(Exception):
-    pass
-
 
 class Checker:
     def __init__(self, ast):
@@ -70,57 +66,40 @@ class Checker:
         full_message = f"Error Semántico (Línea {line}, Col {col}): {message}"
         self.errors.append(full_message)
 
-    def check(self):
+    def analyze(self):
         self.errors = []
         self.symbol_table = (
             SymbolTable()
-        )  # Reiniciar para múltiples chequeos (ej. tests)
+        )
 
         # Podrías pre-registrar funciones built-in aquí si tu lenguaje las tiene
         # ej: self.symbol_table.global_scope.define(Symbol("readInt", SymbolKind.FUNCTION, ...))
 
         self._visit(self.ast)
 
-        # Chequeo post-recorrido: ¿funciones no-void tienen return?
-        # Esta es una forma simple. Un análisis de flujo de control es más robusto.
-        # Iterar sobre todos los símbolos de función definidos
-        # (necesitarías una forma de obtener todas las funciones, quizás del global_scope)
-
         if self.errors:
-            # Imprimir errores aquí o devolverlos para que el llamador los maneje
-            print("\n--- Errores Semánticos ---")
-            for error in self.errors:
-               print(error)
-            print("-------------------------\n")
-            return self.errors  # Indica que hubo errores
+            print(self.errors)
+            return CheckerError(self.errors).print_errors()
         return self.symbol_table
 
     def _visit(self, node):
-        if node is None:  # Si el parser retornó None por un error previo
+        if node is None:
             return None
         method_name = f"_visit_{node.__class__.__name__}"
         visitor = getattr(self, method_name, self._generic_visit)
         return visitor(node)
 
     def _generic_visit(self, node):
-        # print(f"Advertencia: Visita genérica para nodo no manejado explícitamente: {node.__class__.__name__}")
-        # Para nodos que no tienen un visitor específico pero tienen hijos que podrían necesitar ser visitados.
-        # Esto es peligroso si no sabes qué nodos son. Mejor ser explícito.
-        # Por ahora, no hacemos nada para evitar visitas no deseadas.
-        # Cada _visit_ específico debe llamar a _visit para sus hijos.
         return None
 
-    # --- Visitor Methods ---
-
     def _visit_Program(self, node: Program):
-        self.symbol_table.enter_scope("<program_body>")  # O simplemente usar el global
+        self.symbol_table.enter_scope("<program_body>")
         for stmt in node.statements:
             self._visit(stmt)
-        self.symbol_table.exit_scope()  # Salir del scope del programa si se creó uno
+        self.symbol_table.exit_scope()
 
     def _visit_VarDecl(self, node: VarDecl):
         # `VarDecl(kind, identifier_token, var_type_str, initializer_expr)`
-        # Asumo que `node.identifier` es el TOKEN ID y `node.var_type` el string del tipo.
         var_name = (
             node.identifier
         )  # Si `identifier` es un string, necesitas el token para la ubicación.
@@ -289,13 +268,10 @@ class Checker:
         op_loc = node.op_token if hasattr(node, "op_token") else node
 
         expr_type = self._visit(node.expr)
-        if expr_type is None:  # Error ya reportado
+        if expr_type is None:
             return None
 
-        op_char = node.op  # e.g. '-', '!'
-        # Tu gramática tiene GROW ('^') como unario, pero no está en la tabla de unarios.
-        # Si 'GROW' es `^` y significa "puntero a" o "valor de", necesitaría manejo especial.
-        # Si `node.op` puede ser "NOT" del parser para el token "!", mapearlo.
+        op_char = node.op
         if (
             op_char == "NOT"
             and hasattr(node, "op_token")
@@ -329,10 +305,6 @@ class Checker:
         if ttype == "TRUE" or ttype == "FALSE":
             return "bool"
 
-        # Caso para tipos usados como literales (no debería ocurrir según tu gramática de literal)
-        # pero si Literal.type_token pudiera ser 'INT', 'FLOAT_TYPE', etc.
-        # if ttype == 'INT': return 'int'
-
         self._add_error(f"Tipo de literal desconocido o inesperado: {ttype}", node)
         return None
 
@@ -363,14 +335,10 @@ class Checker:
             )
             return None
 
-        return (
-            "int"
-        )
+        return "int"
 
     def _visit_FuncDecl(self, node: FuncDecl):
-        func_name = (
-            node.identifier
-        )
+        func_name = node.identifier
         id_token_for_loc = node.id_token if hasattr(node, "id_token") else node
 
         if self.symbol_table.current_scope.lookup(func_name, current_scope_only=True):
@@ -378,9 +346,7 @@ class Checker:
                 f"Función '{func_name}' ya declarada en este ámbito.", id_token_for_loc
             )
 
-        return_type_str = (
-            node.return_type
-        )
+        return_type_str = node.return_type
         type_token_for_loc = (
             node.return_type_token if hasattr(node, "return_type_token") else node
         )
@@ -395,9 +361,7 @@ class Checker:
         param_names_in_decl = set()
         if node.parameters and node.parameters.params:
             for p_idx, (p_name_str, p_type_str) in enumerate(node.parameters.params):
-                param_loc_node = (
-                    node.parameters
-                )
+                param_loc_node = node.parameters
                 if (
                     hasattr(node.parameters, "param_tokens")
                     and len(node.parameters.param_tokens) > p_idx
@@ -490,9 +454,7 @@ class Checker:
             )
             return None
 
-        expected_params_info = (
-            func_symbol.params_info
-        )
+        expected_params_info = func_symbol.params_info
         num_expected_args = len(expected_params_info)
         num_passed_args = len(node.arguments) if node.arguments else 0
 
@@ -501,9 +463,7 @@ class Checker:
                 f"Función '{func_name}' espera {num_expected_args} argumento(s), pero se pasaron {num_passed_args}.",
                 call_loc_node,
             )
-            return (
-                func_symbol.return_type
-            )
+            return func_symbol.return_type
 
         for i, arg_expr_node in enumerate(node.arguments):
             passed_arg_type = self._visit(arg_expr_node)
@@ -511,9 +471,7 @@ class Checker:
                 continue
 
             expected_param_type = expected_params_info[i]["type"]
-            if (
-                expected_param_type is None
-            ):
+            if expected_param_type is None:
                 continue
 
             if not self.symbol_table.is_type_assignable(
@@ -529,9 +487,7 @@ class Checker:
 
     def _visit_IfStmt(self, node: IfStmt):
         condition_type = self._visit(node.condition)
-        if (
-            condition_type is not None and condition_type != "bool"
-        ):
+        if condition_type is not None and condition_type != "bool":
             self._add_error(
                 f"La condición de la sentencia 'if' debe ser de tipo 'bool', pero se encontró tipo '{condition_type}'.",
                 node.condition,
@@ -592,9 +548,7 @@ class Checker:
         if returned_expr_type is None:
             return
 
-        if (
-            expected_return_type is None
-        ):
+        if expected_return_type is None:
             return
 
         if not self.symbol_table.is_type_assignable(
@@ -607,7 +561,7 @@ class Checker:
 
     def _visit_PrintStmt(self, node: PrintStmt):
         expr_type = self._visit(node.expression)
-        if expr_type is None: 
+        if expr_type is None:
             return
 
         allowed_print_types = {"int", "float", "char", "bool"}
@@ -619,9 +573,7 @@ class Checker:
 
     def _visit_Cast(self, node: Cast):
         target_type_str = node.cast_type
-        cast_type_loc = (
-            node.type_token if hasattr(node, "type_token") else node
-        )
+        cast_type_loc = node.type_token if hasattr(node, "type_token") else node
 
         if (
             target_type_str not in self.symbol_table.valid_types

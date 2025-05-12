@@ -66,11 +66,7 @@ class SymbolTable:
             ("-", "float", "float"): "float",
             ("*", "int", "int"): "int",
             ("*", "float", "float"): "float",
-            (
-                "/",
-                "int",
-                "int",
-            ): "int",  # Podría ser float si la división de enteros resulta en float
+            ("/", "int", "int"): "int",
             ("/", "float", "float"): "float",
             # Comparaciones (devuelven bool)
             ("==", "int", "int"): "bool",
@@ -89,20 +85,22 @@ class SymbolTable:
             (">", "float", "float"): "bool",
             ("<=", "float", "float"): "bool",
             (">=", "float", "float"): "bool",
+            ("<", "char", "char"): "bool",
+            (">", "char", "char"): "bool",
+            ("<=", "char", "char"): "bool",
+            (">=", "char", "char"): "bool",
             # Lógicos
             ("&&", "bool", "bool"): "bool",
             ("||", "bool", "bool"): "bool",
         }
-        # (op, type) -> result_type
         self.unary_op_type_compatibility = {
             ("+", "int"): "int",
             ("+", "float"): "float",
             ("-", "int"): "int",
             ("-", "float"): "float",
-            ("!", "bool"): "bool",  # NOT lógico
-            # '^' para tu gramática era 'GROW'. Asumiré que es un operador unario no estándar.
-            # Si es exponenciación, usualmente es binario. Si es NOT bit a bit, aplica a int.
-            # Por ahora lo omito hasta que se aclare su semántica. Si es un error, mejor.
+            ("!", "bool"): "bool",
+            ("^", "int"): "int",
+            ("^", "float"): "float",
         }
 
     def enter_scope(

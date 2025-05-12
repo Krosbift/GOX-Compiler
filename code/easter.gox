@@ -67,8 +67,6 @@ func easter(year int) int {
     return 100 * month + day;
 }
 
-func main() int {
-
 var year int = 2025;				 // Cambia aquí el año
 var resul int = easter(year);
 
@@ -94,11 +92,10 @@ print 'd'; print 'e'; print ' ';
 
 // Decidir si marzo o abril
 if month == 3 {
-	print 'm'; print 'a'; print 'r'; print 'z'; print 'o';
+   print 'm'; print 'a'; print 'r'; print 'z'; print 'o';
 } else {
-  print 'a'; print 'b'; print 'r'; print 'i'; print 'l';
+print 'a'; print 'b'; print 'r'; print 'i'; print 'l';
 }
 
 print '.';
 //print '\n';
-}

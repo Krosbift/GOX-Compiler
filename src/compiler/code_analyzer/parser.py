@@ -33,7 +33,7 @@ class Parser:
         else:
             self.current_token = None
 
-    def parse(self):
+    def analyze(self):
         self.errors = []
         return self.program()
 
@@ -77,16 +77,18 @@ class Parser:
                     (
                         Token(token_type, value, line_number, column_number),
                         (
-                            "Se esperaba el token ASSIGN / LPAREN en la linea "
-                            "{line_number}, columna {column_number}. Pero se encontró "
-                            "el token {token_type}"
+                            f"Se esperaba el token ASSIGN / LPAREN en la linea "
+                            f"{line_number}, columna {column_number}. Pero se encontró "
+                            f"el token {token_type}"
                         ),
                     )
                 )
                 self.next_token()
+        elif self.current_token and self.current_token.type == ("DEREF"):
+            return self.assignment()
         elif self.current_token and self.current_token.type in ("VAR", "CONST"):
             return self.vardecl()
-        elif self.current_token and self.current_token.type == "FUNC":
+        elif self.current_token and self.current_token.type in ("FUNC", "IMPORT"):
             return self.funcdecl()
         elif self.current_token and self.current_token.type == "IF":
             return self.if_stmt()
@@ -108,9 +110,9 @@ class Parser:
                 (
                     Token(token_type, value, line_number, column_number),
                     (
-                        "Se esperaba el token VAR / CONST / FUNC / IF / WHILE / BREAK / "
-                        "CONTINUE / RETURN / PRINT en la linea {line_number}, columna "
-                        "{column_number}. Pero se encontró el token {token_type}"
+                        f"Se esperaba el token VAR / CONST / FUNC / IF / WHILE / BREAK / "
+                        f"CONTINUE / RETURN / PRINT en la linea {line_number}, columna "
+                        f"{column_number}. Pero se encontró el token {token_type}"
                     ),
                 )
             )
@@ -160,11 +162,14 @@ class Parser:
         parameters = self.parameters()
         ParserHelper.expect(self, "RPAREN")
         return_type = ParserHelper.expect_type(self)
-        ParserHelper.expect(self, "LBRACE")
         body = []
-        while self.current_token and self.current_token.type != "RBRACE":
-            body.append(self.statement())
-        ParserHelper.expect(self, "RBRACE")
+        if not is_import:
+            ParserHelper.expect(self, "LBRACE")
+            while self.current_token and self.current_token.type != "RBRACE":
+                body.append(self.statement())
+            ParserHelper.expect(self, "RBRACE")
+        else:
+            ParserHelper.expect(self, "SEMI")
         return FuncDecl(is_import, identifier, parameters, return_type, body)
 
     def if_stmt(self):
@@ -370,10 +375,10 @@ class Parser:
                 (
                     Token(token_type, value, line_number, column_number),
                     (
-                        "Se esperaba el token INTEGER / FLOAT / CHAR / TRUE / FALSE / "
-                        "PLUS / MINUS / GROW / NOT / LPAREN / INT / FLOAT_TYPE / CHAR_TYPE / "
-                        "BOOL / ID en la linea {line_number}, columna {column_number}. "
-                        "Pero se encontró el token {token_type}"
+                        f"Se esperaba el token INTEGER / FLOAT / CHAR / TRUE / FALSE / "
+                        f"PLUS / MINUS / GROW / NOT / LPAREN / INT / FLOAT_TYPE / CHAR_TYPE / "
+                        f"BOOL / ID en la linea {line_number}, columna {column_number}. "
+                        f"Pero se encontró el token {token_type}"
                     ),
                 )
             )
@@ -408,8 +413,8 @@ class Parser:
                 (
                     Token(token_type, value, line_number, column_number),
                     (
-                        "Se esperaba el token ID / DEREF en la linea {line_number}, "
-                        "columna {column_number}. Pero se encontró el token {token_type}"
+                        f"Se esperaba el token ID / DEREF en la linea {line_number}, "
+                        f"columna {column_number}. Pero se encontró el token {token_type}"
                     ),
                 )
             )
