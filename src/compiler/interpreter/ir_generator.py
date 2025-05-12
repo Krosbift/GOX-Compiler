@@ -486,11 +486,12 @@ class IRCodeGenerator:
             # Ahora L está debajo, R (como float) está arriba.
             # Si L necesita conversión:
             if left_type_lang_effective == "int":
-                self._emit(("SWAP",))  # Pila: [R(F), L(I)_tope]
-                self._emit(("ITOF",))  # Pila: [R(F), L(F)_tope]
-                self._emit(
-                    ("SWAP",)
-                )  # Pila: [L(F), R(F)_tope] (orden original para la operación)
+                # self._emit(("SWAP",))  # Pila: [R(F), L(I)_tope]
+                # self._emit(("ITOF",))  # Pila: [R(F), L(F)_tope]
+                # self._emit(
+                #     ("SWAP",)
+                # )  # Pila: [L(F), R(F)_tope] (orden original para la operación) TODO: COMENTARIO DEBIDO AL MAL MANEJO DE ALGUNAS COSAS
+                pass
 
         # Tipos para buscar el opcode IR
         key_left = (
