@@ -180,19 +180,16 @@ class Checker:
 
     def _visit_Assignment(self, node: Assignment):
         # `Assignment(location_node, expression_node)`
-        # `location_node` puede ser `IdentifierLocation` o `DereferenceLocation`
-
-        # Primero, visita la expresión para obtener su tipo
+        
         expr_type = self._visit(node.expression)
-        if expr_type is None:  # Error en la expresión, ya reportado
+        if expr_type is None:
             return
 
-        # Ahora, maneja el lado izquierdo (location)
         if isinstance(node.location, IdentifierLocation):
             var_name = (
                 node.location.name
-            )  # Asume que name es string. Necesitaría `node.location.token`
-            id_loc_node = node.location  # Para ubicación del error
+            )
+            id_loc_node = node.location
 
             symbol = self.symbol_table.current_scope.lookup(var_name)
             if not symbol:
@@ -221,8 +218,6 @@ class Checker:
 
         elif isinstance(node.location, DereferenceLocation):
             # `location <- '`' expression`
-            # Aquí la semántica de tu lenguaje es crucial para el chequeo de tipos.
-            # Si la expresión es una "dirección" (int), el tipo del valor en esa dirección es desconocido estáticamente.
             addr_expr_node = node.location.expression
             address_expr_type = self._visit(addr_expr_node)
             if (
@@ -232,10 +227,7 @@ class Checker:
                     f"La expresión para desreferenciar (puntero) debe ser de tipo 'int', pero se encontró '{address_expr_type}'.",
                     addr_expr_node,
                 )
-            # No podemos verificar si `expr_type` es compatible con lo que hay en memoria.
-            # Es una operación inherentemente insegura en cuanto a tipos sin más información.
-            # print(f"Advertencia (Línea ...): Asignación a ubicación de memoria dereferenciada. El tipo del valor ('{expr_type}') no puede ser verificado estáticamente contra el tipo del destino.")
-            pass  # Se permite la asignación, la seguridad de tipos es responsabilidad del programador aquí.
+            pass
         else:
             self._add_error(
                 "El lado izquierdo de una asignación debe ser una variable o una ubicación de memoria dereferenciada.",
