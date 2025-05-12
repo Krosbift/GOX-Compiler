@@ -48,6 +48,4 @@ func mandel() int {
      return 0;
 }
 
-func main() int {
-    return mandel();
-}
+print mandel();

@@ -18,7 +18,7 @@ const PI = 3.1415;
 var y int = 3;
 var z float = 2.5;
 
-var result int = (x + y) * z;
+var result float = (x + y) * z;
 
 if (result > 20) {
     var bonus int = 10;
@@ -37,7 +37,7 @@ func fib(n int) int {
     if n <= 1 {
         return 1;
     }
-    return fin(n-1) + fib(n-2);
+    return fib(n-1) + fib(n-2);
 }
 print fib(10);
 // Fin del programa

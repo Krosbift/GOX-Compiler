@@ -1,4 +1,3 @@
-
 var memsize int = ^1000;
 const addr = 500;
 

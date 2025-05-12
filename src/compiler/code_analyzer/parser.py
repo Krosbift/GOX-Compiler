@@ -263,122 +263,115 @@ class Parser:
         return self.orterm()
 
     def orterm(self):
-        """
-        ### expression ('||') expression
-        """
-        node = self.andterm()
-        while self.current_token and self.current_token.type == "LOR":
-            op = self.current_token.value
-            self.next_token()
-            node = BinaryOp(node, op, self.andterm())
-        return node
+        return self._parse_binary_op(self.andterm, ("LOR",))
 
     def andterm(self):
-        """
-        ### expression ('&&') expression
-        """
-        node = self.relterm()
-        while self.current_token and self.current_token.type == "LAND":
-            op = self.current_token.value
-            self.next_token()
-            node = BinaryOp(node, op, self.relterm())
-        return node
+        return self._parse_binary_op(self.relterm, ("LAND",))
 
     def relterm(self):
-        """
-        ### expression ('<' / '>' / '<=' / '>=' / '==' / '!=') expression
-        """
-        node = self.addterm()
-        while self.current_token and self.current_token.type in (
-            "LT",
-            "GT",
-            "LE",
-            "GE",
-            "EQ",
-            "NE",
-        ):
-            op = self.current_token.value
-            self.next_token()
-            node = BinaryOp(node, op, self.addterm())
-        return node
+        return self._parse_binary_op(self.addterm, ("LT", "GT", "LE", "GE", "EQ", "NE"))
 
     def addterm(self):
-        """
-        ### expression ('+' / '-') expression
-        """
-        node = self.factor()
-        while self.current_token and self.current_token.type in ("PLUS", "MINUS"):
-            op = self.current_token.value
+        return self._parse_binary_op(self.multterm, ("PLUS", "MINUS"))
+
+    def multterm(self):
+        return self._parse_binary_op(self.unaryterm, ("TIMES", "DIVIDE"))
+
+    def _parse_binary_op(self, higher_precedence_method, op_types):
+        """Función helper genérica para parsear operadores binarios izquierdas-asociativos."""
+        node = higher_precedence_method()
+        while self.current_token and self.current_token.type in op_types:
+            op_token = self.current_token
             self.next_token()
-            node = BinaryOp(node, op, self.factor())
+            right_node = higher_precedence_method()
+            node = BinaryOp(node, op_token.value, right_node)
         return node
 
-    def factor(self):
+    def unaryterm(self):
         """
-        ### expression ('*' / '/') expression
+        Handles unary operators like +, -, !, ^, and ` (dereference as R-value).
+        unary_op_term <- ('+' / '-' / '^' / '!' / '`') unary_op_term
+                      / primary_expression
         """
-        node = self.primary()
-        while self.current_token and self.current_token.type in ("TIMES", "DIVIDE"):
-            op = self.current_token.value
-            self.next_token()
-            node = BinaryOp(node, op, self.primary())
-        return node
+        token = self.current_token
+        if token:
+            if token.type in ("PLUS", "MINUS", "GROW", "NOT"):
+                op_token = token
+                self.next_token()
+                operand = self.unaryterm()
+                return UnaryOp(op_token.value, operand)
+            elif token.type == "DEREF":
+                op_token = token
+                self.next_token()
+                address_expression = self.unaryterm()
+                deref_node = DereferenceLocation(address_expression)
+                if hasattr(deref_node, "token"):
+                    deref_node.token = op_token
+                return deref_node
 
-    def primary(self):
+        return self.primary()
+
+    def primary(
+        self,
+    ):
         """
-        ### ('+' / '-' / '^' / '!') expression |
-        ### INTEGER / FLOAT / CHAR / bool |
-        ### type '(' expression ')' |
-        ### 'int' / 'float' / 'char' / 'bool' |
+        expression <- literal
+            / ID
+            / ID '(' arguments ')'
+            / '(' expression ')'
+            / type '(' expression ')'
         """
-        token = self.current_token if self.current_token else Token()
+        token = self.current_token
+        if not token:
+            return None
+
         if token.type in ("INTEGER", "FLOAT", "CHAR", "TRUE", "FALSE"):
+            literal_token = token
             self.next_token()
-            return Literal(token.value, token.type)
-        elif token.type in ("PLUS", "MINUS", "GROW"):
-            self.next_token()
-            return UnaryOp(token.value, self.expression())
-        elif token.type == "NOT":
-            self.next_token()
-            return UnaryOp("NOT", self.expression())
+            return Literal(literal_token.value, literal_token.type)
+
         elif token.type == "LPAREN":
             self.next_token()
             expr = self.expression()
             ParserHelper.expect(self, "RPAREN")
             return expr
-        elif token.type in ("INT", "FLOAT_TYPE", "CHAR_TYPE", "BOOL"):
-            cast_type = token.value
+
+        elif token.type in (
+            "INT",
+            "FLOAT_TYPE",
+            "CHAR_TYPE",
+            "BOOL",
+        ):
+            cast_type_token = token
             self.next_token()
             ParserHelper.expect(self, "LPAREN")
             expr = self.expression()
             ParserHelper.expect(self, "RPAREN")
-            return Cast(cast_type, expr)
+            return Cast(cast_type_token.value, expr)
+
         elif token.type == "ID":
+            id_token = token
             name = token.value
             self.next_token()
-            if self.current_token.type == "LPAREN":
+            if self.current_token and self.current_token.type == "LPAREN":
                 self.next_token()
                 args = self.arguments()
                 ParserHelper.expect(self, "RPAREN")
                 return FunctionCall(name, args)
             else:
                 return IdentifierLocation(name)
-        elif token.type == "DEREF":
-            self.next_token()
-            expr = self.expression()
-            return DereferenceLocation(expr)
         else:
-            token_type, value, line_number, column_number = (
-                self.current_token if self.current_token else (None, None, None, None)
+            token_type, value, line, col = (
+                token.type,
+                token.value,
+                token.line,
+                token.column,
             )
             self.errors.append(
                 (
-                    Token(token_type, value, line_number, column_number),
+                    token,
                     (
-                        f"Se esperaba el token INTEGER / FLOAT / CHAR / TRUE / FALSE / "
-                        f"PLUS / MINUS / GROW / NOT / LPAREN / INT / FLOAT_TYPE / CHAR_TYPE / "
-                        f"BOOL / ID en la linea {line_number}, columna {column_number}. "
-                        f"Pero se encontró el token {token_type}"
+                        f"Token inesperado '{value}' ({token_type}) en la línea {line}, columna {col} al esperar un primario (literal, ID, '(', tipo)."
                     ),
                 )
             )
@@ -395,16 +388,22 @@ class Parser:
 
     def location(self):
         """
-        ### ID | '`' expression
+        location <- ID
+                / '`' expression
         """
-        if self.current_token and self.current_token.type == "ID":
-            name = self.current_token.value
+        token = self.current_token
+        if token and token.type == "ID":
+            id_token = token
             self.next_token()
-            return IdentifierLocation(name)
-        elif self.current_token and self.current_token.type == "DEREF":
+            return IdentifierLocation(id_token.value)
+        elif token and token.type == "DEREF":
+            deref_op_token = token
             self.next_token()
-            expr = self.expression()
-            return DereferenceLocation(expr)
+            address_expr = self.unaryterm()
+            deref_node = DereferenceLocation(address_expr)
+            if hasattr(deref_node, "token"):
+                deref_node.token = deref_op_token
+            return deref_node
         else:
             token_type, value, line_number, column_number = (
                 self.current_token if self.current_token else (None, None, None, None)

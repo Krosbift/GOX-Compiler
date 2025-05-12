@@ -5,7 +5,7 @@ from ..nodes.expression_node import Expression
 @dataclass
 class UnaryOp(Expression):
     """
-    ### ('+' / '-' / '^') expression
+    ### ('+' / '-' / '^' / '!') expression
     """
 
     def __init__(self, op, expr):
