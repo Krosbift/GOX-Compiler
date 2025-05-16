@@ -673,7 +673,7 @@ class IRCodeGenerator:
         # Esto es equivalente a NOT condición.
         # (NOT X) es (CONSTI 1, SWAP, SUBI)
         self._emit(("CONSTI", 1))
-        self._emit(("SWAP",))  # Pila: [1, cond_val]
+        # self._emit(("SWAP",))  # Pila: [1, cond_val]
         self._emit(("SUBI",))  # Pila: [1 - cond_val] -> esto es (NOT cond_val)
 
         self._emit(
