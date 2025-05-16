@@ -541,178 +541,124 @@ class IRCodeGenerator:
         func_name_ast = node.identifier
         ir_func_name = "_actual_main" if func_name_ast == "main" else func_name_ast
 
-        # La función ya debe existir en self.module.functions por _pre_scan_declarations
         if ir_func_name not in self.module.functions:
-            # print(f"Error IR: Definición de función '{ir_func_name}' no encontrada en pre-scan.")
-            # Podríamos crearla aquí como fallback si el pre-scan falló o no se hizo.
-            # Pero es mejor que el pre-scan la haya creado.
             return
 
         target_ir_func = self.module.functions[ir_func_name]
 
-        if node.is_import:  # Nada que generar para importadas
+        if node.is_import:
             target_ir_func.imported = True
             return
 
-        # Guardar función actual (podría ser _init), y cambiar a esta.
         previous_function = self.current_function
         self.current_function = target_ir_func
-
-        # Entrar al scope semántico de la función
-        # Necesitamos encontrar el scope semántico correspondiente a esta función
-        # Esto es un poco más complejo que solo el nombre, podría haber funciones anidadas (no en tu gramática)
-        # o sobrecargas (tampoco). Por ahora, lookup por nombre en global.
         func_sem_scope = None
-        # El checker crea un scope para la función. Necesitamos una forma de acceder a él.
-        # Si los nodos AST son anotados con su scope semántico por el checker:
         if hasattr(node, "semantic_scope") and node.semantic_scope:
             func_sem_scope = node.semantic_scope
-        else:  # Fallback buscando en los hijos del global (no ideal)
+        else:
             for child_scope in self.semantic_symbol_table.global_scope.children_scopes:
                 if (
                     child_scope.scope_name == f"<func_body_{func_name_ast}>"
-                ):  # Nombre del scope del checker
+                ):
                     func_sem_scope = child_scope
                     break
 
         if not func_sem_scope:
-            # print(f"Error IR: No se encontró el scope semántico para la función {func_name_ast}")
-            self.current_function = previous_function  # Restaurar
+            self.current_function = previous_function
             return
 
         self.current_scope_path.append(func_sem_scope)
 
-        # Registrar locales (parámetros ya están en IRFunction por pre-scan, pero aquí los declaramos como locales)
-        # Los parámetros son los primeros locales.
         for pname, ptype_ir in zip(target_ir_func.parmnames, target_ir_func.parmtypes):
             target_ir_func.new_local(pname, ptype_ir)
         for stmt_node in node.body:
             self._visit(stmt_node)
-        self.current_scope_path.pop()  # Salir del scope de la función
-        self.current_function = previous_function  # Restaurar función IR anterior
+        self.current_scope_path.pop()
+        self.current_function = previous_function
 
     def _visit_FunctionCall(self, node: FunctionCall):
-        # 1. Evaluar argumentos y ponerlos en la pila (en orden inverso de declaración o según convención)
-        #    La convención de C es usualmente argumentos de derecha a izquierda.
-        #    Si los parámetros son (a, b, c), y la llamada es f(x,y,z),
-        #    se apila z, luego y, luego x.
-        #    Asumamos orden de izquierda a derecha para la evaluación en la pila por ahora.
+
         if node.arguments:
             for arg_expr in node.arguments:
                 self._visit(arg_expr)
 
-        # Mapear 'main' a '_actual_main' si es necesario
         ir_call_name = "_actual_main" if node.name == "main" else node.name
         self._emit(("CALL", ir_call_name))
 
     def _visit_ReturnStmt(self, node: ReturnStmt):
-        self._visit(node.expression)  # Deja el valor de retorno en la pila
+        self._visit(node.expression)
         self._emit(("RET",))
 
     def _visit_PrintStmt(self, node: PrintStmt):
-        self._visit(node.expression)  # Deja valor en la pila
+        self._visit(node.expression)
 
-        # Determinar tipo para PRINTI/F/B
         expr_type_lang = self._get_node_semantic_type(node.expression)
         if not expr_type_lang:
             return
 
         if (
             expr_type_lang == "int" or expr_type_lang == "bool"
-        ):  # Bool se imprime como int
+        ):
             self._emit(("PRINTI",))
         elif expr_type_lang == "float":
             self._emit(("PRINTF",))
         elif expr_type_lang == "char":
-            self._emit(("PRINTB",))  # PRINTB imprime el char correspondiente al int
+            self._emit(("PRINTB",))
         else:
-            # print(f"Error IR: Tipo no soportado para PRINT: {expr_type_lang}")
             pass
 
     def _visit_IfStmt(self, node: IfStmt):
-        self._visit(node.condition)  # Deja bool (I) en la pila
+        self._visit(node.condition)
         self._emit(("IF",))
 
-        # Entrar a un nuevo scope semántico para el 'then' block si el checker los crea
-        # self.current_scope_path.append(node.then_block_scope_semantic)
         for stmt in node.then_block:
             self._visit(stmt)
-        # self.current_scope_path.pop()
 
         if node.else_block:
             self._emit(("ELSE",))
-            # self.current_scope_path.append(node.else_block_scope_semantic)
             for stmt in node.else_block:
                 self._visit(stmt)
-            # self.current_scope_path.pop()
 
         self._emit(("ENDIF",))
 
     def _visit_WhileStmt(self, node: WhileStmt):
         self._emit(("LOOP",))
-        # La condición se evalúa DENTRO del loop en tu ircode.py:
-        # LOOP
-        # CONSTI 1
-        # <evaluar test> (deja 0 si test es true para seguir, 1 si test es false para romper)
-        # SUBI
-        # CBREAK
-        # ...body...
-        # ENDLOOP
-        # Esto es: CBREAK si (1 - test_original_como_bool) es true, o sea si test_original es false.
-        # Si test_original es true (1), 1 - 1 = 0. CBREAK no salta.
-        # Si test_original es false (0), 1 - 0 = 1. CBREAK salta.
-
-        # Código para evaluar la condición negada para CBREAK
         self._visit(
             node.condition
-        )  # Deja el bool de la condición (1 para true, 0 para false)
-        # Queremos CBREAK si la condición es FALSA.
-        # CBREAK salta si el tope de la pila es distinto de cero.
-        # Si condición es true (1), necesitamos 0 en la pila para NO saltar.
-        # Si condición es false (0), necesitamos 1 en la pila para SÍ saltar.
-        # Esto es equivalente a NOT condición.
-        # (NOT X) es (CONSTI 1, SWAP, SUBI)
+        )
         self._emit(("CONSTI", 1))
-        # self._emit(("SWAP",))  # Pila: [1, cond_val]
-        self._emit(("SUBI",))  # Pila: [1 - cond_val] -> esto es (NOT cond_val)
+        self._emit(("SUBI",))
 
         self._emit(
             ("CBREAK",)
-        )  # Rompe si (NOT cond_val) es true (o sea, si cond_val es false)
+        )
 
-        # Cuerpo del bucle
-        # self.current_scope_path.append(node.body_scope_semantic)
         for stmt in node.body:
             self._visit(stmt)
-        # self.current_scope_path.pop()
 
         self._emit(("ENDLOOP",))
 
     def _visit_BreakStmt(self, node: BreakStmt):
-        # CBREAK siempre necesita un valor en la pila. Rompe si no es cero.
-        self._emit(("CONSTI", 1))  # Poner un valor no-cero para forzar la ruptura
+        self._emit(("CONSTI", 1))
         self._emit(("CBREAK",))
 
     def _visit_ContinueStmt(self, node: ContinueStmt):
-        self._emit(("CONTINUE",))  # Vuelve al inicio del LOOP más cercano
+        self._emit(("CONTINUE",))
 
     def _visit_Cast(self, node: Cast):
-        self._visit(node.expression)  # Deja valor original en la pila
+        self._visit(node.expression)
 
         from_type_lang = self._get_node_semantic_type(node.expression)
-        to_type_lang = node.cast_type  # Este es el tipo de lenguaje del AST
+        to_type_lang = node.cast_type
 
         if not from_type_lang:
             return
 
-        # Solo emitir instrucción de cast si es necesario según IR
         if from_type_lang != to_type_lang:
             cast_key = (from_type_lang, to_type_lang)
             if cast_key in self._typecast_ircode:
                 for instr_tuple in self._typecast_ircode[cast_key]:
                     self._emit(instr_tuple)
-            # Si no está en _typecast_ircode, significa que el cambio de tipo es solo semántico
-            # y no requiere una instrucción IR (ej. int a bool, o char a int).
 
     def _visit_DereferenceLocation(self, node: DereferenceLocation):
         self._visit(node.expression)
@@ -725,17 +671,14 @@ class IRCodeGenerator:
         elif expected_type_lang == "char":
             self._emit(("PEEKB",))
         else:
-            # print(f"Advertencia IR: No se pudo determinar el tipo para PEEK en DereferenceLocation. Asumiendo PEEKI.")
-            self._emit(("PEEKI",))  # Fallback peligroso
+            self._emit(("PEEKI",))
 
-    # Nodos que no generan código directamente o son manejados por sus padres
     def _visit_Parameters(self, node: Parameters):
         pass
 
     def _visit_Type(self, node: Type):
         pass
 
-    # Statement y Expression son clases base abstractas
     def _visit_Statement(self, node: Statement):
         pass
 
