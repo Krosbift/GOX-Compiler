@@ -20,7 +20,6 @@ class SymbolTablePrinter:
     def _print_scope_recursively(self, scope: Scope, depth: int):
         indent_str = "  " * depth
 
-        # Determinar el nombre del ámbito
         scope_display_name = scope.scope_name
         scope_color = Fore.YELLOW
         if scope.scope_name == "<global>":
@@ -29,10 +28,10 @@ class SymbolTablePrinter:
         elif scope.current_function_symbol:
             scope_display_name = f"Función: '{scope.current_function_symbol.name}'"
             scope_color = Fore.MAGENTA
-        elif scope.scope_name == "<program_body>":  # Si usas este nombre específico
+        elif scope.scope_name == "<program_body>":
             scope_display_name = "Cuerpo del Programa Principal"
             scope_color = Fore.GREEN
-        else:  # Otros bloques como if/while
+        else:
             scope_display_name = f"Bloque: '{scope.scope_name}'"
             scope_color = Fore.BLUE
 
@@ -59,7 +58,6 @@ class SymbolTablePrinter:
             table.align["Tipo"] = "l"
             table.align["Info Adicional"] = "l"
 
-            # Aplicar estilo a los bordes (opcional, pero ALL es común)
             table.hrules = ALL
 
             for name, symbol in scope.symbols.items():
@@ -68,13 +66,12 @@ class SymbolTablePrinter:
                 s_type_str = self._format_symbol_type(symbol)
 
                 s_extra_parts = []
-                extra_color = Fore.WHITE  # Color por defecto para info extra
+                extra_color = Fore.WHITE
 
                 if symbol.kind == SymbolKind.FUNCTION:
                     s_kind_str = Fore.CYAN + s_kind_str
                     if symbol.is_import:
                         s_extra_parts.append(Fore.YELLOW + "importada")
-                    # Chequeo de retorno (simplificado)
                     if (
                         not symbol.is_import
                         and symbol.return_type
@@ -85,7 +82,6 @@ class SymbolTablePrinter:
 
                 elif symbol.kind == SymbolKind.CONSTANT:
                     s_kind_str = Fore.LIGHTGREEN_EX + s_kind_str
-                    # Las constantes deben ser inicializadas por definición en tu checker
 
                 elif symbol.kind == SymbolKind.VARIABLE:
                     s_kind_str = Fore.LIGHTBLUE_EX + s_kind_str
@@ -94,7 +90,6 @@ class SymbolTablePrinter:
 
                 elif symbol.kind == SymbolKind.PARAMETER:
                     s_kind_str = Fore.LIGHTMAGENTA_EX + s_kind_str
-                    # Los parámetros siempre están inicializados
 
                 s_extra_str = (
                     (Style.RESET_ALL + ", ").join(s_extra_parts)
@@ -106,25 +101,21 @@ class SymbolTablePrinter:
                     [
                         s_name,
                         s_kind_str
-                        + Style.RESET_ALL,  # Reset para que el color no se propague a la tabla
+                        + Style.RESET_ALL,
                         s_type_str,
                         s_extra_str + Style.RESET_ALL,
                     ]
                 )
 
-            # Imprimir la tabla con indentación
             table_string = table.get_string()
             indented_table_string = "\n".join(
                 [f"{indent_str}  {line}" for line in table_string.splitlines()]
             )
             print(indented_table_string)
 
-        # Recursivamente imprimir ámbitos hijos
         for child_scope in scope.children_scopes:
             self._print_scope_recursively(child_scope, depth + 1)
 
-        # if not scope.children_scopes and scope.symbols:
-        #     print("") # Quitar el espacio extra, PrettyTable ya maneja bien el espaciado
 
     def _format_symbol_type(self, symbol: Symbol) -> str:
         if symbol.kind == SymbolKind.FUNCTION:
@@ -136,9 +127,8 @@ class SymbolTablePrinter:
             params_formatted = (Fore.WHITE + ", ").join(param_types_str)
             return_t = (
                 symbol.return_type or "void"
-            )  # Asumiendo que 'void' está en tus valid_types si aplica
+            )
 
-            # Colorear los paréntesis y la flecha
             return f"{Fore.WHITE}({params_formatted}{Fore.WHITE}) {Style.BRIGHT}{Fore.WHITE}->{Style.RESET_ALL} {Fore.GREEN}{return_t}{Style.RESET_ALL}"
 
         type_color_map = {
@@ -146,7 +136,6 @@ class SymbolTablePrinter:
             "float": Fore.GREEN,
             "char": Fore.GREEN,
             "bool": Fore.GREEN,
-            "void": Fore.LIGHTBLACK_EX,  # Si usas void
         }
         type_str = symbol.type or (Fore.RED + "desconocido" + Style.RESET_ALL)
         return type_color_map.get(type_str, Fore.WHITE) + type_str + Style.RESET_ALL

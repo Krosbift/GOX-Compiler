@@ -5,9 +5,8 @@ const addr = 500;
 print `addr + 0;       // Reads 1234 from memory address addr
 
 `addr = 12.34;         // Stores 12.34
-print `addr + 0.0;
+print `addr + 12.34;
 
 `addr = 'H';
 print char(`addr);
 print '\n';
-    

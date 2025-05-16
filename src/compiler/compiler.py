@@ -13,7 +13,7 @@ class Compiler:
         if self.code_verify():
             return 0
         if self.gen_ircode():
-            raise SystemError()
+            return 0
         print("\n--- MÓDULO IR GENERADO ---")
         self.ircode.dump()
 
